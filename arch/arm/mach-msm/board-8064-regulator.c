@@ -228,6 +228,7 @@ VREG_CONSUMERS(LVS7) = {
 	REGULATOR_SUPPLY("dsi1_vddio",		"mipi_dsi.1"),
 	REGULATOR_SUPPLY("dsi_pll_vddio",	"mdp.0"),
 	REGULATOR_SUPPLY("hdmi_vdda",		"hdmi_msm.0"),
+	REGULATOR_SUPPLY("sata_pmp_pwr",	"msm_sata.0"),
 };
 VREG_CONSUMERS(USB_OTG) = {
 	REGULATOR_SUPPLY("8921_usb_otg",	NULL),
