@@ -421,20 +421,20 @@ static struct msm_camera_device_platform_data msm_camera_csi_device_data[] = {
 	},
 };
 
-#define CAML_RSTN PM8921_GPIO_PM_TO_SYS(28)
-#define CAMR_RSTN 34
+#define GPIO_CAM_MCLK0			5
+#define GPIO_CAM1_RST_N			34
 
 static struct gpio apq8064_common_cam_gpio[] = {
 };
 
 static struct gpio apq8064_back_cam_gpio[] = {
-	{5, GPIOF_DIR_IN, "CAMIF_MCLK"},
-	{CAML_RSTN, GPIOF_DIR_OUT, "CAM_RESET"},
+	{GPIO_CAM_MCLK0, GPIOF_DIR_IN, "CAMIF_MCLK"},
+	{GPIO_CAM1_RST_N, GPIOF_DIR_OUT, "CAM_RESET"},
 };
 
 static struct msm_gpio_set_tbl apq8064_back_cam_gpio_set_tbl[] = {
-	{CAML_RSTN, GPIOF_OUT_INIT_LOW, 10000},
-	{CAML_RSTN, GPIOF_OUT_INIT_HIGH, 10000},
+	{GPIO_CAM1_RST_N, GPIOF_OUT_INIT_LOW, 10000},
+	{GPIO_CAM1_RST_N, GPIOF_OUT_INIT_HIGH, 10000},
 };
 
 static struct msm_camera_gpio_conf apq8064_back_cam_gpio_conf = {
@@ -453,6 +453,35 @@ static struct msm_camera_i2c_conf apq8064_back_cam_i2c_conf = {
 	.mux_dev = &msm8960_device_i2c_mux_gsbi4,
 	.i2c_mux_mode = MODE_L,
 };
+
+#ifdef CONFIG_OV5640_V4L2
+static struct msm_camera_sensor_flash_data flash_ov5640 = {
+	.flash_type = MSM_CAMERA_FLASH_NONE
+};
+
+static struct msm_camera_csi_lane_params ov5640_csi_lane_params = {
+	.csi_lane_assign = 0xE4,
+	.csi_lane_mask = 0x3,
+};
+
+static struct msm_camera_sensor_platform_info sensor_board_info_ov5640 =
+{
+	.mount_angle = 0,
+	.gpio_conf = &apq8064_back_cam_gpio_conf,
+	.i2c_conf = &apq8064_back_cam_i2c_conf,
+	.csi_lane_params = &ov5640_csi_lane_params,
+};
+
+static struct msm_camera_sensor_info msm_camera_sensor_ov5640_data = {
+    .sensor_name = "ov5640",
+    .pdata = &msm_camera_csi_device_data[0],
+    .flash_data = &flash_ov5640,
+    .sensor_platform_info = &sensor_board_info_ov5640,
+    .csi_if = 1,
+    .camera_type = BACK_CAMERA_2D,
+    .sensor_type = YUV_SENSOR,
+};
+#endif
 
 static struct platform_device msm_camera_server = {
 	.name = "msm_cam_server",
@@ -479,6 +508,12 @@ void __init cm_qs600_init_camera(void)
 
 #ifdef CONFIG_I2C
 static struct i2c_board_info apq8064_camera_i2c_boardinfo[] = {
+#ifdef CONFIG_OV5640_V4L2
+	{
+		I2C_BOARD_INFO("ov5640", 0x3C),
+		.platform_data = &msm_camera_sensor_ov5640_data,
+	},
+#endif
 };
 
 struct i2c_registry cm_qs600_camera_i2c_devices[] __initdata = {

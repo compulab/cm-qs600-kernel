@@ -125,6 +125,7 @@ static struct gpiomux_setting hdmi_active_2_cfg = {
 	.pull = GPIOMUX_PULL_DOWN,
 };
 
+#if !defined(CONFIG_OV5640_V4L2)
 static struct gpiomux_setting gsbi4_suspended_cfg = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_8MA,
@@ -136,6 +137,7 @@ static struct gpiomux_setting gsbi4_active_cfg = {
 	.drv = GPIOMUX_DRV_8MA,
 	.pull = GPIOMUX_PULL_UP,
 };
+#endif
 
 static struct gpiomux_setting gsbi5_suspended_cfg = {
 	.func = GPIOMUX_FUNC_2,
@@ -195,16 +197,16 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 			[GPIOMUX_ACTIVE] = &gsbi3_active_cfg,
 		},
 	},
-
+#if !defined(CONFIG_OV5640_V4L2)
 	{
-		.gpio	= 10,			/* GSBI4 SPI MOSI / UART TX */
+		.gpio	= 10,			/* GSBI4 SPI MOSI / UART TX / GSBI4 I2C SDA */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
 		},
 	},
 	{
-		.gpio	= 11,			/* GSBI4 SPI MISO / UART RX */
+		.gpio	= 11,			/* GSBI4 SPI MISO / UART RX / GSBI4 I2C CLK */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
@@ -224,7 +226,7 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
 		},
 	},
-
+#endif
 	{
 		.gpio      = 18,		/* GSBI1 UART TX */
 		.settings = {
