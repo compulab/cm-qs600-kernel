@@ -759,11 +759,6 @@ uint32 hdmi_inp(uint32 offset)
 }
 #endif /* DEBUG */
 
-static void hdmi_msm_turn_on(void);
-static int hdmi_msm_audio_off(void);
-static int hdmi_msm_read_edid(void);
-static void hdmi_msm_hpd_off(void);
-
 static bool hdmi_ready(void)
 {
 	return MSM_HDMI_BASE &&
