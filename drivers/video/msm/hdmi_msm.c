@@ -92,6 +92,7 @@ static int hdmi_msm_audio_off(void);
 static int hdmi_msm_read_edid(void);
 static void hdmi_msm_hpd_off(void);
 static boolean hdmi_msm_is_dvi_mode(void);
+static void hdmi_msm_hpd_polarity_setup(void);
 
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL_CEC_SUPPORT
 
@@ -812,6 +813,7 @@ static void hdmi_msm_hpd_state_work(struct work_struct *work)
 		return;
 	}
 
+	hdmi_msm_hpd_polarity_setup();
 	hdmi_msm_send_event(external_common_state->hpd_state);
 }
 
@@ -996,6 +998,7 @@ static irqreturn_t hdmi_msm_isr(int irq, void *dev_id)
 	static uint32 fifo_urun_int_occurred;
 	static uint32 sample_drop_int_occurred;
 	const uint32 occurrence_limit = 5;
+	bool hpd_connected;
 
 	if (!hdmi_ready()) {
 		DEV_DBG("ISR ignored, probe failed\n");
@@ -1007,19 +1010,22 @@ static irqreturn_t hdmi_msm_isr(int irq, void *dev_id)
 	hpd_int_status = HDMI_INP_ND(0x0250);
 	/* HDMI_HPD_INT_CTRL[0x0254] */
 	hpd_int_ctrl = HDMI_INP_ND(0x0254);
-	if ((hpd_int_ctrl & (1 << 2)) && (hpd_int_status & (1 << 0))) {
+	if ((hpd_int_ctrl & BIT(2)) && (hpd_int_status & BIT(0))) {
+		hpd_connected = !!(hpd_int_status & BIT(1));
 		/*
-		 * Got HPD interrupt. Ack the interrupt and disable any
-		 * further HPD interrupts until we process this interrupt.
+		 * HPD interrupt handling:
+		 * 1. ack HPD interrupt
+		 * 2. disable HPD interrupt for debouncing purpose
 		 */
-		HDMI_OUTP(0x0254, ((hpd_int_ctrl | (BIT(0))) & ~BIT(2)));
+		hpd_int_ctrl |= BIT(0);
+		hpd_int_ctrl &= ~BIT(2);
+		HDMI_OUTP(0x0254, hpd_int_ctrl);
 
-		external_common_state->hpd_state =
-			(HDMI_INP(0x0250) & BIT(1)) >> 1;
+		external_common_state->hpd_state = hpd_connected;
 		DEV_DBG("%s: Queuing work to handle HPD %s event\n", __func__,
-				external_common_state->hpd_state ? "connect" :
-				"disconnect");
-		queue_work(hdmi_work_queue, &hdmi_msm_state->hpd_state_work);
+			(hpd_connected ? "connect" : "disconnect"));
+		/* re-enable HPD interrupt after debouncing delay */
+		queue_delayed_work(hdmi_work_queue, &hdmi_msm_state->hpd_state_work, (HZ / 10)/* 100 mSec */);
 		return IRQ_HANDLED;
 	}
 
@@ -4592,8 +4598,12 @@ static void hdmi_msm_update_panel_info(struct msm_fb_data_type *mfd)
 
 static bool hdmi_msm_cable_connected(void)
 {
-	return hdmi_msm_state->hpd_initialized &&
-			external_common_state->hpd_state;
+	bool status;
+
+	status = hdmi_msm_state->hpd_initialized &&
+		external_common_state->hpd_state;
+
+	return status;
 }
 
 static int __devinit hdmi_msm_probe(struct platform_device *pdev)
@@ -4937,7 +4947,7 @@ static int __init hdmi_msm_init(void)
 	hdmi_common_init_panel_info(&hdmi_msm_panel_data.panel_info);
 	init_completion(&hdmi_msm_state->ddc_sw_done);
 	init_completion(&hdmi_msm_state->hpd_event_processed);
-	INIT_WORK(&hdmi_msm_state->hpd_state_work, hdmi_msm_hpd_state_work);
+	INIT_DELAYED_WORK(&hdmi_msm_state->hpd_state_work, hdmi_msm_hpd_state_work);
 
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL_CEC_SUPPORT
 	INIT_WORK(&hdmi_msm_state->cec_latch_detect_work,

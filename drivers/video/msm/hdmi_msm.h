@@ -59,7 +59,7 @@ struct hdmi_msm_state_type {
 #endif
 	boolean full_auth_done;
 	boolean hpd_during_auth;
-	struct work_struct hpd_state_work;
+	struct delayed_work hpd_state_work;
 	struct completion ddc_sw_done;
 
 	bool hdcp_enable;
