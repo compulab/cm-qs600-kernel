@@ -2614,6 +2614,12 @@ static int addrconf_notify(struct notifier_block *this, unsigned long event,
 					dev->name);
 				break;
 			}
+			else {
+				printk(KERN_INFO
+				       "ADDRCONF(NETDEV_UP): %s: "
+				       "link is ready\n",
+				       dev->name);
+			}
 
 			if (!idev && dev->mtu >= IPV6_MIN_MTU)
 				idev = ipv6_add_dev(dev);
