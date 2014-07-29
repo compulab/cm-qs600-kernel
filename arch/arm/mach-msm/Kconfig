@@ -918,6 +918,14 @@ config MACH_FSM9XXX_SURF
 	  chipset based SURF evaluation board and
 	  FFA board.
 
+config MACH_CM_QS600
+	depends on ARCH_APQ8064
+	bool "CompuLab APQ8064-based CM-QS600 Module"
+	help
+	  Support for the CompuLab APQ8064 CM-QS600 Module,
+	  including specific configurations for the board
+	  and its peripherals.
+
 config MACH_MSM_DUMMY
 	bool "NONE (No device)"
 
