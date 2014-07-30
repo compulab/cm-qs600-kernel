@@ -1,4 +1,5 @@
-/* Copyright (c) 2011-2012, The Linux Foundation. All rights reserved.
+/*
+ * Copyright (c) 2014, CompuLab ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -87,10 +88,10 @@ void apq8064_init_pmic(void);
 extern struct msm_camera_board_info apq8064_camera_board_info;
 void apq8064_init_cam(void);
 
-#define APQ_8064_GSBI1_QUP_I2C_BUS_ID 0
-#define APQ_8064_GSBI3_QUP_I2C_BUS_ID 3
-#define APQ_8064_GSBI4_QUP_I2C_BUS_ID 4
-#define APQ_8064_GSBI5_QUP_I2C_BUS_ID 5
+#define APQ_8064_GSBI1_QUP_I2C_BUS_ID	0
+#define APQ_8064_GSBI3_QUP_I2C_BUS_ID	3
+#define APQ_8064_GSBI4_QUP_I2C_BUS_ID	4
+#define APQ_8064_GSBI5_QUP_I2C_BUS_ID	5
 
 unsigned char apq8064_hdmi_as_primary_selected(void);
 unsigned char apq8064_mhl_display_enabled(void);
@@ -102,58 +103,12 @@ void __init apq8064_set_display_params(char *prim_panel, char *ext_panel,
 
 void apq8064_init_gpu(void);
 void apq8064_pm8xxx_gpio_mpp_init(void);
-void __init configure_apq8064_pm8917_power_grid(void);
 
-#define PLATFORM_IS_MPQ8064() \
-	(machine_is_mpq8064_hrd() || \
-	 machine_is_mpq8064_dtv() || \
-	 machine_is_mpq8064_cdp() \
-	)
-
-
-#define GPIO_EXPANDER_IRQ_BASE	(TABLA_INTERRUPT_BASE + \
-					NR_TABLA_IRQS)
-#define GPIO_EXPANDER_GPIO_BASE	(PM8821_MPP_BASE + PM8821_NR_MPPS)
-
-#define GPIO_EPM_EXPANDER_BASE	GPIO_EXPANDER_GPIO_BASE
-#define SX150X_EPM_NR_GPIOS	16
-#define SX150X_EPM_NR_IRQS	8
-
-#define SX150X_EXP1_GPIO_BASE	(GPIO_EPM_EXPANDER_BASE + \
-					SX150X_EPM_NR_GPIOS)
-#define SX150X_EXP1_IRQ_BASE	(GPIO_EXPANDER_IRQ_BASE + \
-				SX150X_EPM_NR_IRQS)
-#define SX150X_EXP1_NR_IRQS	16
-#define SX150X_EXP1_NR_GPIOS	16
-
-#define SX150X_EXP2_GPIO_BASE	(SX150X_EXP1_GPIO_BASE + \
-					SX150X_EXP1_NR_GPIOS)
-#define SX150X_EXP2_IRQ_BASE	(SX150X_EXP1_IRQ_BASE + SX150X_EXP1_NR_IRQS)
-#define SX150X_EXP2_NR_IRQS	8
-#define SX150X_EXP2_NR_GPIOS	8
-
-#define SX150X_EXP3_GPIO_BASE	(SX150X_EXP2_GPIO_BASE + \
-					SX150X_EXP2_NR_GPIOS)
-#define SX150X_EXP3_IRQ_BASE	(SX150X_EXP2_IRQ_BASE + SX150X_EXP2_NR_IRQS)
-#define SX150X_EXP3_NR_IRQS	8
-#define SX150X_EXP3_NR_GPIOS	8
-
-#define SX150X_EXP4_GPIO_BASE	(SX150X_EXP3_GPIO_BASE + \
-					SX150X_EXP3_NR_GPIOS)
-#define SX150X_EXP4_IRQ_BASE	(SX150X_EXP3_IRQ_BASE + SX150X_EXP3_NR_IRQS)
-#define SX150X_EXP4_NR_IRQS	16
-#define SX150X_EXP4_NR_GPIOS	16
-
-#define SX150X_GPIO(_expander, _pin) (SX150X_EXP##_expander##_GPIO_BASE + _pin)
-
-enum {
-	SX150X_EPM,
-	SX150X_EXP1,
-	SX150X_EXP2,
-	SX150X_EXP3,
-	SX150X_EXP4,
-};
+#define GPIO_EXPANDER_IRQ_BASE		(TABLA_INTERRUPT_BASE + NR_TABLA_IRQS)
+#define GPIO_EXPANDER_GPIO_BASE		(PM8821_MPP_BASE + PM8821_NR_MPPS)
+#define GPIO_EPM_EXPANDER_BASE		GPIO_EXPANDER_GPIO_BASE
 
 extern struct msm_rtb_platform_data apq8064_rtb_pdata;
 extern struct msm_cache_dump_platform_data apq8064_cache_dump_pdata;
-#endif
+
+#endif	/* __ARCH_ARM_MACH_MSM_BOARD_APQ8064_H */

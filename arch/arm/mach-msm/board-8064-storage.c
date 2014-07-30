@@ -353,7 +353,7 @@ void __init apq8064_init_mmc(void)
 		apq8064_add_sdcc(2, apq8064_sdc2_pdata);
 
 	if (apq8064_sdc3_pdata) {
-		if (!machine_is_apq8064_cdp()) {
+		if (!machine_is_apq8064_cdp() && !machine_is_cm_qs600()) {
 			apq8064_sdc3_pdata->wpswitch_gpio = 0;
 			apq8064_sdc3_pdata->is_wpswitch_active_low = false;
 		}
@@ -383,7 +383,7 @@ void __init apq8064_init_mmc(void)
 				apq8064_sdc3_pdata->status_irq = 0;
 			}
 		}
-		if (machine_is_apq8064_cdp()) {
+		if (machine_is_apq8064_cdp() || machine_is_cm_qs600()) {
 			int i;
 
 			for (i = 0;

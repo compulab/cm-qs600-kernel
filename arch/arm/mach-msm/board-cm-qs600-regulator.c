@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, CompuLab ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -258,21 +258,6 @@ VREG_CONSUMERS(EXT_TS_SW) = {
 	REGULATOR_SUPPLY("ext_ts_sw",		NULL),
 	REGULATOR_SUPPLY("vdd_ana",		"3-005b"),
 };
-VREG_CONSUMERS(AVC_1P2V) = {
-	REGULATOR_SUPPLY("avc_1p2v",	NULL),
-};
-VREG_CONSUMERS(AVC_1P8V) = {
-	REGULATOR_SUPPLY("avc_1p8v",	NULL),
-};
-VREG_CONSUMERS(AVC_2P2V) = {
-	REGULATOR_SUPPLY("avc_2p2v",	NULL),
-};
-VREG_CONSUMERS(AVC_5V) = {
-	REGULATOR_SUPPLY("avc_5v",	NULL),
-};
-VREG_CONSUMERS(AVC_3P3V) = {
-	REGULATOR_SUPPLY("avc_3p3v",	NULL),
-};
 
 /* Regulators that are only present when using PM8921 */
 VREG_CONSUMERS(S1) = {
@@ -292,38 +277,6 @@ VREG_CONSUMERS(NCP) = {
 VREG_CONSUMERS(EXT_5V) = {
 	REGULATOR_SUPPLY("ext_5v",		NULL),
 	REGULATOR_SUPPLY("vbus",		"msm_ehci_host.0"),
-};
-
-/* Regulators that are only present when using PM8917 */
-VREG_CONSUMERS(8917_S1) = {
-	REGULATOR_SUPPLY("8921_s1",		NULL),
-	REGULATOR_SUPPLY("iris_vdddig",		"wcnss_wlan.0"),
-};
-VREG_CONSUMERS(L30) = {
-	REGULATOR_SUPPLY("8917_l30",		NULL),
-};
-VREG_CONSUMERS(L31) = {
-	REGULATOR_SUPPLY("8917_l31",		NULL),
-};
-VREG_CONSUMERS(L32) = {
-	REGULATOR_SUPPLY("8917_l32",		NULL),
-};
-VREG_CONSUMERS(L33) = {
-	REGULATOR_SUPPLY("8917_l33",		NULL),
-};
-VREG_CONSUMERS(L34) = {
-	REGULATOR_SUPPLY("8917_l34",		NULL),
-};
-VREG_CONSUMERS(L35) = {
-	REGULATOR_SUPPLY("8917_l35",		NULL),
-};
-VREG_CONSUMERS(L36) = {
-	REGULATOR_SUPPLY("8917_l36",		NULL),
-};
-VREG_CONSUMERS(BOOST) = {
-	REGULATOR_SUPPLY("8917_boost",		NULL),
-	REGULATOR_SUPPLY("vbus",		"msm_ehci_host.0"),
-	REGULATOR_SUPPLY("hdmi_mvs",		"hdmi_msm.0"),
 };
 
 #define PM8XXX_VREG_INIT(_id, _name, _min_uV, _max_uV, _modes, _ops, \
@@ -565,17 +518,6 @@ apq8064_gpio_regulator_pdata[] __devinitdata = {
 			PM8921_MPP_PM_TO_SYS(8), NULL),
 };
 
-struct gpio_regulator_platform_data
-mpq8064_gpio_regulator_pdata[] __devinitdata = {
-	GPIO_VREG(AVC_1P2V, "avc_1p2v", "avc_1p2v_en", SX150X_GPIO(4, 2), NULL),
-	GPIO_VREG(AVC_1P8V, "avc_1p8v", "avc_1p8v_en", SX150X_GPIO(4, 4), NULL),
-	GPIO_VREG(AVC_2P2V, "avc_2p2v", "avc_2p2v_en",
-						 SX150X_GPIO(4, 14), NULL),
-	GPIO_VREG(AVC_5V, "avc_5v", "avc_5v_en", SX150X_GPIO(4, 3), NULL),
-	GPIO_VREG(AVC_3P3V, "avc_3p3v", "avc_3p3v_en",
-					SX150X_GPIO(4, 15), "avc_5v"),
-};
-
 /* SAW regulator constraints */
 struct regulator_init_data msm8064_saw_regulator_pdata_8921_s5 =
 	/*	      ID  vreg_name	       min_uV   max_uV */
@@ -602,39 +544,6 @@ msm8064_pm8921_regulator_pdata[] __devinitdata = {
 	/*           ID        name     always_on pd       en_t supply reg_ID */
 	PM8XXX_VS300(USB_OTG,  "8921_usb_otg",  0, 0,         0, "ext_5v", 2),
 	PM8XXX_VS300(HDMI_MVS, "8921_hdmi_mvs", 0, 1,         0, "ext_5v", 3),
-};
-
-/* PM8917 regulator constraints */
-struct pm8xxx_regulator_platform_data
-msm8064_pm8917_regulator_pdata[] __devinitdata = {
-	/*
-	 *		ID   name always_on pd min_uV   max_uV   en_t supply
-	 *	system_uA reg_ID
-	 */
-	PM8XXX_NLDO1200(L26, "8921_l26", 0, 1, 375000, 1050000, 200, "8921_s7",
-		0, 1),
-	PM8XXX_LDO(L30,      "8917_l30", 0, 1, 1800000, 1800000, 200, NULL,
-		0, 2),
-	PM8XXX_LDO(L31,      "8917_l31", 0, 1, 1800000, 1800000, 200, NULL,
-		0, 3),
-	PM8XXX_LDO(L32,      "8917_l32", 0, 1, 2800000, 2800000, 200, NULL,
-		0, 4),
-	PM8XXX_LDO(L33,      "8917_l33", 0, 1, 2800000, 2800000, 200, NULL,
-		0, 5),
-	PM8XXX_LDO(L34,      "8917_l34", 0, 1, 1800000, 1800000, 200, NULL,
-		0, 6),
-	PM8XXX_LDO(L35,      "8917_l35", 0, 1, 3000000, 3000000, 200, NULL,
-		0, 7),
-	PM8XXX_LDO(L36,      "8917_l36", 0, 1, 1800000, 1800000, 200, NULL,
-		0, 8),
-
-	/*
-	 *           ID     name   always_on  min_uV   max_uV en_t supply reg_ID
-	 */
-	PM8XXX_BOOST(BOOST, "8917_boost", 0,  5000000, 5000000, 500, NULL, 9),
-
-	/*	     ID        name      always_on pd en_t supply    reg_ID */
-	PM8XXX_VS300(USB_OTG,  "8921_usb_otg",  0, 1, 0,   "8917_boost", 10),
 };
 
 static struct rpm_regulator_init_data
@@ -695,8 +604,6 @@ apq8064_rpm_regulator_pm8921_init_data[] __devinitdata = {
 
 int msm8064_pm8921_regulator_pdata_len __devinitdata =
 	ARRAY_SIZE(msm8064_pm8921_regulator_pdata);
-int msm8064_pm8917_regulator_pdata_len __devinitdata =
-	ARRAY_SIZE(msm8064_pm8917_regulator_pdata);
 
 #define RPM_REG_MAP(_id, _sleep_also, _voter, _supply, _dev_name) \
 	{ \
@@ -744,42 +651,3 @@ apq8064_rpm_regulator_pm8921_pdata __devinitdata = {
 	.vreg_id_vdd_dig	  = RPM_VREG_ID_PM8921_S3,
 	.requires_tcxo_workaround = true,
 };
-
-/*
- * Fix up regulator consumer data that moves to a different regulator when
- * PM8917 is used.
- */
-void __init configure_apq8064_pm8917_power_grid(void)
-{
-	static struct rpm_regulator_init_data *rpm_data;
-	int i;
-
-	for (i = 0; i < ARRAY_SIZE(apq8064_rpm_regulator_init_data); i++) {
-		rpm_data = &apq8064_rpm_regulator_init_data[i];
-		if (rpm_data->id == RPM_VREG_ID_PM8921_S1) {
-			rpm_data->init_data.consumer_supplies
-				= vreg_consumers_8917_S1;
-			rpm_data->init_data.num_consumer_supplies
-				= ARRAY_SIZE(vreg_consumers_8917_S1);
-		}
-
-		/*
-		 * Currently min/max voltage level for LD03 was set to 3.075V.
-		 * But some Full speed USB headsets requires higher cross over
-		 * voltage. The cross over voltage is directly proportional
-		 * to the phy 3.3V rail voltage. So modified the max voltage
-		 * level of LD03 to 3.3V. But apq8064_rpm_regulator_init_data
-		 * is shared between PM8921 and PM8917, so set max_uV back to
-		 * 3.075V for PM8917.
-		 */
-		 if (rpm_data->id == RPM_VREG_ID_PM8921_L3)
-			rpm_data->init_data.constraints.max_uV = 3075000;
-
-	}
-
-	/*
-	 * Switch to 8960_PM8917 rpm-regulator version so that TCXO workaround
-	 * is applied to PM8917 regulators L25, L26, L27, and L28.
-	 */
-	apq8064_rpm_regulator_pdata.version = RPM_VREG_VERSION_8960_PM8917;
-}
