@@ -25,31 +25,16 @@
 #include "devices.h"
 #include "board-cm-qs600.h"
 
-#if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
+#if defined(CONFIG_ATL1C) || defined(CONFIG_ATL1C_MODULE)
 static struct gpiomux_setting gpio_eth_config = {
 	.pull = GPIOMUX_PULL_NONE,
 	.drv = GPIOMUX_DRV_8MA,
 	.func = GPIOMUX_FUNC_GPIO,
 };
 
-/* The SPI configurations apply to GSBI 5*/
-static struct gpiomux_setting gpio_spi_config = {
-	.func = GPIOMUX_FUNC_2,
-	.drv = GPIOMUX_DRV_12MA,
-	.pull = GPIOMUX_PULL_NONE,
-};
-
-/* The SPI configurations apply to GSBI 5 chip select 2*/
-static struct gpiomux_setting gpio_spi_cs2_config = {
-	.func = GPIOMUX_FUNC_3,
-	.drv = GPIOMUX_DRV_12MA,
-	.pull = GPIOMUX_PULL_NONE,
-};
-
-
 static struct msm_gpiomux_config cm_qs600_ethernet_configs[] = {
 	{
-		.gpio = 43,
+		.gpio = 55,
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gpio_eth_config,
 			[GPIOMUX_ACTIVE] = &gpio_eth_config,
@@ -242,38 +227,6 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gsbi1_uart_config,
 		},
 	},
-#if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
-	{
-		.gpio      = 51,		/* GSBI5 QUP SPI_DATA_MOSI */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_config,
-		},
-	},
-	{
-		.gpio      = 52,		/* GSBI5 QUP SPI_DATA_MISO */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_config,
-		},
-	},
-	{
-		.gpio      = 53,		/* Funny CS0 */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_config,
-		},
-	},
-	{
-		.gpio      = 31,		/* GSBI5 QUP SPI_CS2_N */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_cs2_config,
-		},
-	},
-	{
-		.gpio      = 54,		/* GSBI5 QUP SPI_CLK */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_config,
-		},
-	},
-#endif
 	{
 		.gpio      = 30,		/* FP CS */
 		.settings = {
@@ -591,7 +544,7 @@ void __init cm_qs600_init_gpiomux(void)
 	msm_gpiomux_install(wcnss_5wire_interface,
 			ARRAY_SIZE(wcnss_5wire_interface));
 
-#if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
+#if defined(CONFIG_ATL1C) || defined(CONFIG_ATL1C_MODULE)
 	msm_gpiomux_install(cm_qs600_ethernet_configs,
 			    ARRAY_SIZE(cm_qs600_ethernet_configs));
 #endif

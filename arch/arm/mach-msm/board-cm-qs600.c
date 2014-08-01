@@ -110,10 +110,12 @@
 #define PCIE_AXI_BAR_PHYS		0x08000000
 #define PCIE_AXI_BAR_SIZE		SZ_128M
 
-/* PCIe pmic gpios */
-#define PCIE_WAKE_N_PMIC_GPIO		12
-#define PCIE_PWR_EN_PMIC_GPIO		13
-#define PCIE_RST_N_PMIC_MPP		1
+/* PCIe gpios */
+#define PMIC_PCIE_WAKE_N		6
+#define MSM_PCIE_PWR_EN			-EINVAL
+#define MSM_PCIE_RST_N			55
+#define MSM_PCIE_WAKE_N_IRQ		PM8921_GPIO_IRQ(PM8921_IRQ_BASE, \
+							PMIC_PCIE_WAKE_N)
 
 #ifdef CONFIG_KERNEL_MSM_CONTIG_MEM_REGION
 static unsigned msm_contig_mem_size = MSM_CONTIG_MEM_SIZE;
@@ -1709,18 +1711,18 @@ static void __init cm_qs600_init_buses(void)
 
 /* PCIe gpios */
 static struct msm_pcie_gpio_info_t msm_pcie_gpio_info[MSM_PCIE_MAX_GPIO] = {
-	{"rst_n", PM8921_MPP_PM_TO_SYS(PCIE_RST_N_PMIC_MPP), 0},
-	{"pwr_en", PM8921_GPIO_PM_TO_SYS(PCIE_PWR_EN_PMIC_GPIO), 1},
+	{"rst_n", MSM_PCIE_RST_N, 0},
+	{"pwr_en", MSM_PCIE_PWR_EN, 1},
 };
 
 static struct msm_pcie_platform msm_pcie_platform_data = {
 	.gpio = msm_pcie_gpio_info,
 	.axi_addr = PCIE_AXI_BAR_PHYS,
 	.axi_size = PCIE_AXI_BAR_SIZE,
-	.wake_n = PM8921_GPIO_IRQ(PM8921_IRQ_BASE, PCIE_WAKE_N_PMIC_GPIO),
+	.wake_n = MSM_PCIE_WAKE_N_IRQ,
 };
 
-static int __init mpq8064_pcie_enabled(void)
+static int __init cm_qs600_pcie_enabled(void)
 {
 	return !((readl_relaxed(QFPROM_RAW_FEAT_CONFIG_ROW0_MSB) & BIT(21)) ||
 		(readl_relaxed(QFPROM_RAW_OEM_CONFIG_ROW0_LSB) & BIT(4)));
@@ -1728,10 +1730,18 @@ static int __init mpq8064_pcie_enabled(void)
 
 static void __init cm_qs600_pcie_init(void)
 {
-	if (mpq8064_pcie_enabled()) {
-		msm_device_pcie.dev.platform_data = &msm_pcie_platform_data;
-		platform_device_register(&msm_device_pcie);
+	struct msm_xo_voter *xo_ptr;
+
+	if (!cm_qs600_pcie_enabled()) {
+		pr_info("PCIe: disabled \n");
+		return;
 	}
+
+	pr_info("PCIe: enabled \n");
+	msm_device_pcie.dev.platform_data = &msm_pcie_platform_data;
+	xo_ptr = msm_xo_get(MSM_XO_TCXO_A0, "Pcie clock buffer for DB");
+	msm_xo_mode_vote(xo_ptr, MSM_XO_MODE_ON);
+	platform_device_register(&msm_device_pcie);
 }
 
 static struct platform_device cm_qs600_device_ext_5v_vreg __devinitdata = {
