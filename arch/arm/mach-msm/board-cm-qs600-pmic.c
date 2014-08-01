@@ -131,7 +131,6 @@ static struct pm8xxx_gpio_init pm8921_gpios[] __initdata = {
 };
 
 static struct pm8xxx_gpio_init pm8921_cdp_kp_gpios[] __initdata = {
-	PM8921_GPIO_INPUT(27, PM_GPIO_PULL_UP_30),
 	PM8921_GPIO_INPUT(42, PM_GPIO_PULL_UP_30),
 	PM8921_GPIO_INPUT(17, PM_GPIO_PULL_UP_1P5),	/* SD_WP */
 };
