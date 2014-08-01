@@ -47,7 +47,7 @@ static struct gpiomux_setting gpio_spi_cs2_config = {
 };
 
 
-struct msm_gpiomux_config apq8064_ethernet_configs[] = {
+static struct msm_gpiomux_config cm_qs600_ethernet_configs[] = {
 	{
 		.gpio = 43,
 		.settings = {
@@ -184,7 +184,7 @@ static struct gpiomux_setting gsbi5_active_cfg = {
 };
 #endif
 
-static struct msm_gpiomux_config apq8064_hdmi_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_hdmi_configs[] __initdata = {
 	{
 		.gpio = 69,
 		.settings = {
@@ -215,7 +215,7 @@ static struct msm_gpiomux_config apq8064_hdmi_configs[] __initdata = {
 	},
 };
 
-static struct msm_gpiomux_config apq8064_gsbi_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 	{
 		.gpio      = 8,			/* GSBI3 I2C QUP SDA */
 		.settings = {
@@ -320,7 +320,7 @@ static struct msm_gpiomux_config apq8064_gsbi_configs[] __initdata = {
 	},
 };
 
-static struct msm_gpiomux_config apq8064_slimbus_config[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_slimbus_config[] __initdata = {
 	{
 		.gpio   = 40,           /* slimbus clk */
 		.settings = {
@@ -335,7 +335,7 @@ static struct msm_gpiomux_config apq8064_slimbus_config[] __initdata = {
 	},
 };
 
-static struct msm_gpiomux_config apq8064_audio_codec_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_audio_codec_configs[] __initdata = {
 	{
 		.gpio = 38,
 		.settings = {
@@ -351,9 +351,9 @@ static struct msm_gpiomux_config apq8064_audio_codec_configs[] __initdata = {
 };
 
 /* External 3.3 V regulator enable */
-static struct msm_gpiomux_config apq8064_ext_regulator_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_ext_regulator_configs[] __initdata = {
 	{
-		.gpio = APQ8064_EXT_3P3V_REG_EN_GPIO,
+		.gpio = CM_QS600_EXT_3P3V_REG_EN_GPIO,
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &ext_regulator_config,
 		},
@@ -442,7 +442,7 @@ static struct gpiomux_setting sdc2_data_1_suspended_cfg = {
 	.pull = GPIOMUX_PULL_UP,
 };
 
-static struct msm_gpiomux_config apq8064_sdc2_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_sdc2_configs[] __initdata = {
 	{
 		.gpio      = 59,
 		.settings = {
@@ -515,7 +515,7 @@ static struct gpiomux_setting sdc4_data_1_suspended_cfg = {
 	.pull = GPIOMUX_PULL_UP,
 };
 
-static struct msm_gpiomux_config apq8064_sdc4_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_sdc4_configs[] __initdata = {
 	{
 		.gpio      = 68,
 		.settings = {
@@ -562,23 +562,23 @@ static struct msm_gpiomux_config apq8064_sdc4_configs[] __initdata = {
 };
 #endif
 
-static struct gpiomux_setting apq8064_sdc3_card_det_cfg = {
+static struct gpiomux_setting cm_qs600_sdc3_card_det_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
 	.pull = GPIOMUX_PULL_UP,
 };
 
-static struct msm_gpiomux_config apq8064_sdc3_configs[] __initdata = {
+static struct msm_gpiomux_config cm_qs600_sdc3_configs[] __initdata = {
 	{
 		.gpio      = 26,
 		.settings = {
-			[GPIOMUX_SUSPENDED] = &apq8064_sdc3_card_det_cfg,
-			[GPIOMUX_ACTIVE] = &apq8064_sdc3_card_det_cfg,
+			[GPIOMUX_SUSPENDED] = &cm_qs600_sdc3_card_det_cfg,
+			[GPIOMUX_ACTIVE] = &cm_qs600_sdc3_card_det_cfg,
 		},
 	},
 };
 
-void __init apq8064_init_gpiomux(void)
+void __init cm_qs600_init_gpiomux(void)
 {
 	int rc;
 
@@ -592,39 +592,39 @@ void __init apq8064_init_gpiomux(void)
 			ARRAY_SIZE(wcnss_5wire_interface));
 
 #if defined(CONFIG_KS8851) || defined(CONFIG_KS8851_MODULE)
-	msm_gpiomux_install(apq8064_ethernet_configs,
-			    ARRAY_SIZE(apq8064_ethernet_configs));
+	msm_gpiomux_install(cm_qs600_ethernet_configs,
+			    ARRAY_SIZE(cm_qs600_ethernet_configs));
 #endif
 
-	msm_gpiomux_install(apq8064_gsbi_configs,
-			    ARRAY_SIZE(apq8064_gsbi_configs));
+	msm_gpiomux_install(cm_qs600_gsbi_configs,
+			    ARRAY_SIZE(cm_qs600_gsbi_configs));
 
-	msm_gpiomux_install(apq8064_slimbus_config,
-			    ARRAY_SIZE(apq8064_slimbus_config));
+	msm_gpiomux_install(cm_qs600_slimbus_config,
+			    ARRAY_SIZE(cm_qs600_slimbus_config));
 
-	msm_gpiomux_install(apq8064_audio_codec_configs,
-			    ARRAY_SIZE(apq8064_audio_codec_configs));
+	msm_gpiomux_install(cm_qs600_audio_codec_configs,
+			    ARRAY_SIZE(cm_qs600_audio_codec_configs));
 
 	pr_debug("%s(): audio-auxpcm: Include GPIO configs"
 		" as audio is not the primary user"
 		" for these GPIO Pins\n", __func__);
 
-	msm_gpiomux_install(apq8064_ext_regulator_configs,
-			    ARRAY_SIZE(apq8064_ext_regulator_configs));
+	msm_gpiomux_install(cm_qs600_ext_regulator_configs,
+			    ARRAY_SIZE(cm_qs600_ext_regulator_configs));
 
-	msm_gpiomux_install(apq8064_hdmi_configs,
-			    ARRAY_SIZE(apq8064_hdmi_configs));
+	msm_gpiomux_install(cm_qs600_hdmi_configs,
+			    ARRAY_SIZE(cm_qs600_hdmi_configs));
 
 #ifdef CONFIG_MMC_MSM_SDC2_SUPPORT
-	msm_gpiomux_install(apq8064_sdc2_configs,
-			    ARRAY_SIZE(apq8064_sdc2_configs));
+	msm_gpiomux_install(cm_qs600_sdc2_configs,
+			    ARRAY_SIZE(cm_qs600_sdc2_configs));
 #endif
 
 #ifdef CONFIG_MMC_MSM_SDC4_SUPPORT
-	 msm_gpiomux_install(apq8064_sdc4_configs,
-			     ARRAY_SIZE(apq8064_sdc4_configs));
+	 msm_gpiomux_install(cm_qs600_sdc4_configs,
+			     ARRAY_SIZE(cm_qs600_sdc4_configs));
 #endif
 
-	 msm_gpiomux_install(apq8064_sdc3_configs,
-			     ARRAY_SIZE(apq8064_sdc3_configs));
+	 msm_gpiomux_install(cm_qs600_sdc3_configs,
+			     ARRAY_SIZE(cm_qs600_sdc3_configs));
 }

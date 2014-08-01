@@ -37,14 +37,9 @@
 #define TABLA_INTERRUPT_BASE		(PM8821_IRQ_BASE + PM8821_NR_IRQS)
 
 extern struct pm8xxx_regulator_platform_data
-	msm8064_pm8921_regulator_pdata[] __devinitdata;
+	cm_qs600_pm8921_regulator_pdata[] __devinitdata;
 
-extern int msm8064_pm8921_regulator_pdata_len __devinitdata;
-
-extern struct pm8xxx_regulator_platform_data
-	msm8064_pm8917_regulator_pdata[] __devinitdata;
-
-extern int msm8064_pm8917_regulator_pdata_len __devinitdata;
+extern int cm_qs600_pm8921_regulator_pdata_len __devinitdata;
 
 #define GPIO_VREG_ID_EXT_5V		0
 #define GPIO_VREG_ID_EXT_3P3V		1
@@ -57,24 +52,21 @@ extern int msm8064_pm8917_regulator_pdata_len __devinitdata;
 #define GPIO_VREG_ID_AVC_5V		3
 #define GPIO_VREG_ID_AVC_3P3V		4
 
-#define APQ8064_EXT_3P3V_REG_EN_GPIO	77
+#define CM_QS600_EXT_3P3V_REG_EN_GPIO	77
 
 extern struct gpio_regulator_platform_data
-	apq8064_gpio_regulator_pdata[] __devinitdata;
-
-extern struct gpio_regulator_platform_data
-	mpq8064_gpio_regulator_pdata[] __devinitdata;
+	cm_qs600_gpio_regulator_pdata[] __devinitdata;
 
 extern struct rpm_regulator_platform_data
-	apq8064_rpm_regulator_pdata __devinitdata;
+	cm_qs600_rpm_regulator_pdata __devinitdata;
 
 extern struct rpm_regulator_platform_data
-	apq8064_rpm_regulator_pm8921_pdata __devinitdata;
+	cm_qs600_rpm_regulator_pm8921_pdata __devinitdata;
 
-extern struct regulator_init_data msm8064_saw_regulator_pdata_8921_s5;
-extern struct regulator_init_data msm8064_saw_regulator_pdata_8921_s6;
-extern struct regulator_init_data msm8064_saw_regulator_pdata_8821_s0;
-extern struct regulator_init_data msm8064_saw_regulator_pdata_8821_s1;
+extern struct regulator_init_data cm_qs600_saw_regulator_pdata_8921_s5;
+extern struct regulator_init_data cm_qs600_saw_regulator_pdata_8921_s6;
+extern struct regulator_init_data cm_qs600_saw_regulator_pdata_8821_s0;
+extern struct regulator_init_data cm_qs600_saw_regulator_pdata_8821_s1;
 
 struct mmc_platform_data;
 int __init apq8064_add_sdcc(unsigned int controller,
@@ -82,8 +74,8 @@ int __init apq8064_add_sdcc(unsigned int controller,
 int __init apq8064_add_uio(void);
 
 void apq8064_init_mmc(void);
-void apq8064_init_gpiomux(void);
-void apq8064_init_pmic(void);
+void cm_qs600_init_gpiomux(void);
+void cm_qs600_init_pmic(void);
 
 extern struct msm_camera_board_info apq8064_camera_board_info;
 void apq8064_init_cam(void);
@@ -102,7 +94,7 @@ void __init apq8064_set_display_params(char *prim_panel, char *ext_panel,
 		unsigned char resolution);
 
 void apq8064_init_gpu(void);
-void apq8064_pm8xxx_gpio_mpp_init(void);
+void cm_qs600_pm8xxx_gpio_mpp_init(void);
 
 #define GPIO_EXPANDER_IRQ_BASE		(TABLA_INTERRUPT_BASE + NR_TABLA_IRQS)
 #define GPIO_EXPANDER_GPIO_BASE		(PM8821_MPP_BASE + PM8821_NR_MPPS)

@@ -507,11 +507,11 @@ VREG_CONSUMERS(EXT_5V) = {
 
 /* GPIO regulator constraints */
 struct gpio_regulator_platform_data
-apq8064_gpio_regulator_pdata[] __devinitdata = {
+cm_qs600_gpio_regulator_pdata[] __devinitdata = {
 	/*        ID      vreg_name gpio_label   gpio                  supply */
 	GPIO_VREG(EXT_5V, "ext_5v", "ext_5v_en", PM8921_MPP_PM_TO_SYS(7), NULL),
 	GPIO_VREG(EXT_3P3V, "ext_3p3v", "ext_3p3v_en",
-		  APQ8064_EXT_3P3V_REG_EN_GPIO, NULL),
+		  CM_QS600_EXT_3P3V_REG_EN_GPIO, NULL),
 	GPIO_VREG(EXT_TS_SW, "ext_ts_sw", "ext_ts_sw_en",
 		  PM8921_GPIO_PM_TO_SYS(23), "ext_3p3v"),
 	GPIO_VREG(EXT_MPP8, "ext_mpp8", "ext_mpp8_en",
@@ -519,21 +519,21 @@ apq8064_gpio_regulator_pdata[] __devinitdata = {
 };
 
 /* SAW regulator constraints */
-struct regulator_init_data msm8064_saw_regulator_pdata_8921_s5 =
+struct regulator_init_data cm_qs600_saw_regulator_pdata_8921_s5 =
 	/*	      ID  vreg_name	       min_uV   max_uV */
 	SAW_VREG_INIT(S5, "8921_s5",	       850000, 1300000);
-struct regulator_init_data msm8064_saw_regulator_pdata_8921_s6 =
+struct regulator_init_data cm_qs600_saw_regulator_pdata_8921_s6 =
 	SAW_VREG_INIT(S6, "8921_s6",	       850000, 1300000);
 
-struct regulator_init_data msm8064_saw_regulator_pdata_8821_s0 =
+struct regulator_init_data cm_qs600_saw_regulator_pdata_8821_s0 =
 	/*	      ID       vreg_name	min_uV  max_uV */
 	SAW_VREG_INIT(8821_S0, "8821_s0",       850000, 1300000);
-struct regulator_init_data msm8064_saw_regulator_pdata_8821_s1 =
+struct regulator_init_data cm_qs600_saw_regulator_pdata_8821_s1 =
 	SAW_VREG_INIT(8821_S1, "8821_s1",       850000, 1300000);
 
 /* PM8921 regulator constraints */
 struct pm8xxx_regulator_platform_data
-msm8064_pm8921_regulator_pdata[] __devinitdata = {
+cm_qs600_pm8921_regulator_pdata[] __devinitdata = {
 	/*
 	 *		ID   name always_on pd min_uV   max_uV   en_t supply
 	 *	system_uA reg_ID
@@ -602,8 +602,8 @@ apq8064_rpm_regulator_pm8921_init_data[] __devinitdata = {
 	RPM_NCP(NCP, 0,    0, 1800000, 1800000, "8921_l6", 1p60),
 };
 
-int msm8064_pm8921_regulator_pdata_len __devinitdata =
-	ARRAY_SIZE(msm8064_pm8921_regulator_pdata);
+int cm_qs600_pm8921_regulator_pdata_len __devinitdata =
+	ARRAY_SIZE(cm_qs600_pm8921_regulator_pdata);
 
 #define RPM_REG_MAP(_id, _sleep_also, _voter, _supply, _dev_name) \
 	{ \
@@ -630,7 +630,7 @@ static struct rpm_regulator_consumer_mapping
 	RPM_REG_MAP(S3,   0, 5, "krait3_dig",   "acpuclk-8064"),
 };
 
-struct rpm_regulator_platform_data apq8064_rpm_regulator_pdata __devinitdata = {
+struct rpm_regulator_platform_data cm_qs600_rpm_regulator_pdata __devinitdata = {
 	.init_data		  = apq8064_rpm_regulator_init_data,
 	.num_regulators		  = ARRAY_SIZE(apq8064_rpm_regulator_init_data),
 	.version		  = RPM_VREG_VERSION_8960,
@@ -643,7 +643,7 @@ struct rpm_regulator_platform_data apq8064_rpm_regulator_pdata __devinitdata = {
 
 /* Regulators that are only present when using PM8921 */
 struct rpm_regulator_platform_data
-apq8064_rpm_regulator_pm8921_pdata __devinitdata = {
+cm_qs600_rpm_regulator_pm8921_pdata __devinitdata = {
 	.init_data		  = apq8064_rpm_regulator_pm8921_init_data,
 	.num_regulators	= ARRAY_SIZE(apq8064_rpm_regulator_pm8921_init_data),
 	.version		  = RPM_VREG_VERSION_8960,

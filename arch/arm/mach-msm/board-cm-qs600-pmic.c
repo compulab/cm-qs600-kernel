@@ -152,7 +152,7 @@ static struct pm8xxx_mpp_init pm8xxx_mpps[] __initdata = {
 	PM8921_MPP_INIT(1, D_OUTPUT, PM8921_MPP_DIG_LEVEL_VPH, DOUT_CTRL_HIGH),
 };
 
-void __init apq8064_configure_gpios(struct pm8xxx_gpio_init *data, int len)
+static void __init cm_qs600_configure_gpios(struct pm8xxx_gpio_init *data, int len)
 {
 	int i, rc;
 
@@ -164,16 +164,16 @@ void __init apq8064_configure_gpios(struct pm8xxx_gpio_init *data, int len)
 	}
 }
 
-void __init apq8064_pm8xxx_gpio_mpp_init(void)
+void __init cm_qs600_pm8xxx_gpio_mpp_init(void)
 {
 	int i, rc;
 
-	apq8064_configure_gpios(pm8921_gpios, ARRAY_SIZE(pm8921_gpios));
+	cm_qs600_configure_gpios(pm8921_gpios, ARRAY_SIZE(pm8921_gpios));
 
-	apq8064_configure_gpios(pm8921_cdp_kp_gpios,
+	cm_qs600_configure_gpios(pm8921_cdp_kp_gpios,
 				ARRAY_SIZE(pm8921_cdp_kp_gpios));
 
-	apq8064_configure_gpios(pm8921_8917_cdp_ts_gpios,
+	cm_qs600_configure_gpios(pm8921_8917_cdp_ts_gpios,
 				ARRAY_SIZE(pm8921_8917_cdp_ts_gpios));
 
 	for (i = 0; i < ARRAY_SIZE(pm8xxx_mpps); i++) {
@@ -186,13 +186,13 @@ void __init apq8064_pm8xxx_gpio_mpp_init(void)
 	}
 }
 
-static struct pm8xxx_pwrkey_platform_data apq8064_pm8921_pwrkey_pdata = {
+static struct pm8xxx_pwrkey_platform_data cm_qs600_pm8921_pwrkey_pdata = {
 	.pull_up		= 1,
 	.kpd_trigger_delay_us	= 15625,
 	.wakeup			= 1,
 };
 
-static struct pm8xxx_misc_platform_data apq8064_pm8921_misc_pdata = {
+static struct pm8xxx_misc_platform_data cm_qs600_pm8921_misc_pdata = {
 	.priority		= 0,
 };
 
@@ -262,7 +262,7 @@ static struct pm8xxx_led_config pm8921_led_configs[] = {
 	},
 };
 
-static struct pm8xxx_led_platform_data apq8064_pm8921_leds_pdata = {
+static struct pm8xxx_led_platform_data cm_qs600_pm8921_leds_pdata = {
 		.led_core = &pm8921_led_core_pdata,
 		.configs = pm8921_led_configs,
 		.num_configs = ARRAY_SIZE(pm8921_led_configs),
@@ -305,7 +305,7 @@ static struct pm8xxx_adc_properties apq8064_pm8921_adc_data = {
 	.bipolar                = 0,
 };
 
-static struct pm8xxx_adc_platform_data apq8064_pm8921_adc_pdata = {
+static struct pm8xxx_adc_platform_data cm_qs600_pm8921_adc_pdata = {
 	.adc_channel		= apq8064_pm8921_adc_channels_data,
 	.adc_num_board_channel	= ARRAY_SIZE(apq8064_pm8921_adc_channels_data),
 	.adc_prop		= &apq8064_pm8921_adc_data,
@@ -313,17 +313,17 @@ static struct pm8xxx_adc_platform_data apq8064_pm8921_adc_pdata = {
 };
 
 static struct pm8xxx_mpp_platform_data
-apq8064_pm8921_mpp_pdata __devinitdata = {
+cm_qs600_pm8921_mpp_pdata __devinitdata = {
 	.mpp_base	= PM8921_MPP_PM_TO_SYS(1),
 };
 
 static struct pm8xxx_gpio_platform_data
-apq8064_pm8921_gpio_pdata __devinitdata = {
+cm_qs600_pm8921_gpio_pdata __devinitdata = {
 	.gpio_base	= PM8921_GPIO_PM_TO_SYS(1),
 };
 
 static struct pm8xxx_irq_platform_data
-apq8064_pm8921_irq_pdata __devinitdata = {
+cm_qs600_pm8921_irq_pdata __devinitdata = {
 	.irq_base		= PM8921_IRQ_BASE,
 	.devirq			= MSM_GPIO_TO_INT(74),
 	.irq_trigger_flag	= IRQF_TRIGGER_LOW,
@@ -331,7 +331,7 @@ apq8064_pm8921_irq_pdata __devinitdata = {
 };
 
 static struct pm8xxx_rtc_platform_data
-apq8064_pm8921_rtc_pdata = {
+cm_qs600_pm8921_rtc_pdata = {
 	.rtc_write_enable       = false,
 	.rtc_alarm_powerup      = false,
 };
@@ -346,7 +346,7 @@ static int apq8064_pm8921_therm_mitigation[] = {
 #define MAX_VOLTAGE_MV          4200
 #define CHG_TERM_MA		100
 static struct pm8921_charger_platform_data
-apq8064_pm8921_chg_pdata __devinitdata = {
+cm_qs600_pm8921_chg_pdata __devinitdata = {
 	.update_time		= 60000,
 	.max_voltage		= MAX_VOLTAGE_MV,
 	.min_voltage		= 3200,
@@ -371,13 +371,13 @@ apq8064_pm8921_chg_pdata __devinitdata = {
 };
 
 static struct pm8xxx_ccadc_platform_data
-apq8064_pm8xxx_ccadc_pdata = {
+cm_qs600_pm8xxx_ccadc_pdata = {
 	.r_sense_uohm		= 10000,
 	.calib_delay_ms		= 600000,
 };
 
 static struct pm8921_bms_platform_data
-apq8064_pm8921_bms_pdata __devinitdata = {
+cm_qs600_pm8921_bms_pdata __devinitdata = {
 	.battery_type			= BATT_UNKNOWN,
 	.r_sense_uohm			= 10000,
 	.v_cutoff			= 3400,
@@ -400,18 +400,18 @@ apq8064_pm8921_bms_pdata __devinitdata = {
 };
 
 static struct pm8921_platform_data
-apq8064_pm8921_platform_data __devinitdata = {
-	.irq_pdata		= &apq8064_pm8921_irq_pdata,
-	.gpio_pdata		= &apq8064_pm8921_gpio_pdata,
-	.mpp_pdata		= &apq8064_pm8921_mpp_pdata,
-	.rtc_pdata		= &apq8064_pm8921_rtc_pdata,
-	.pwrkey_pdata		= &apq8064_pm8921_pwrkey_pdata,
-	.misc_pdata		= &apq8064_pm8921_misc_pdata,
-	.leds_pdata		= &apq8064_pm8921_leds_pdata,
-	.adc_pdata		= &apq8064_pm8921_adc_pdata,
-	.charger_pdata		= &apq8064_pm8921_chg_pdata,
-	.bms_pdata		= &apq8064_pm8921_bms_pdata,
-	.ccadc_pdata		= &apq8064_pm8xxx_ccadc_pdata,
+cm_qs600_pm8921_platform_data __devinitdata = {
+	.irq_pdata		= &cm_qs600_pm8921_irq_pdata,
+	.gpio_pdata		= &cm_qs600_pm8921_gpio_pdata,
+	.mpp_pdata		= &cm_qs600_pm8921_mpp_pdata,
+	.rtc_pdata		= &cm_qs600_pm8921_rtc_pdata,
+	.pwrkey_pdata		= &cm_qs600_pm8921_pwrkey_pdata,
+	.misc_pdata		= &cm_qs600_pm8921_misc_pdata,
+	.leds_pdata		= &cm_qs600_pm8921_leds_pdata,
+	.adc_pdata		= &cm_qs600_pm8921_adc_pdata,
+	.charger_pdata		= &cm_qs600_pm8921_chg_pdata,
+	.bms_pdata		= &cm_qs600_pm8921_bms_pdata,
+	.ccadc_pdata		= &cm_qs600_pm8xxx_ccadc_pdata,
 };
 
 static struct pm8xxx_irq_platform_data
@@ -433,15 +433,15 @@ apq8064_pm8821_platform_data __devinitdata = {
 	.mpp_pdata	= &apq8064_pm8821_mpp_pdata,
 };
 
-static struct msm_ssbi_platform_data apq8064_ssbi_pm8921_pdata __devinitdata = {
+static struct msm_ssbi_platform_data cm_qs600_ssbi_pm8921_pdata __devinitdata = {
 	.controller_type = MSM_SBI_CTRL_PMIC_ARBITER,
 	.slave	= {
 		.name		= "pm8921-core",
-		.platform_data	= &apq8064_pm8921_platform_data,
+		.platform_data	= &cm_qs600_pm8921_platform_data,
 	},
 };
 
-static struct msm_ssbi_platform_data apq8064_ssbi_pm8821_pdata __devinitdata = {
+static struct msm_ssbi_platform_data cm_qs600_ssbi_pm8821_pdata __devinitdata = {
 	.controller_type = MSM_SBI_CTRL_PMIC_ARBITER,
 	.slave	= {
 		.name		= "pm8821-core",
@@ -449,19 +449,19 @@ static struct msm_ssbi_platform_data apq8064_ssbi_pm8821_pdata __devinitdata = {
 	},
 };
 
-void __init apq8064_init_pmic(void)
+void __init cm_qs600_init_pmic(void)
 {
 	pmic_reset_irq = PM8921_IRQ_BASE + PM8921_RESOUT_IRQ;
 
 	apq8064_device_ssbi_pmic1.dev.platform_data =
-						&apq8064_ssbi_pm8921_pdata;
+						&cm_qs600_ssbi_pm8921_pdata;
 	apq8064_device_ssbi_pmic2.dev.platform_data =
-				&apq8064_ssbi_pm8821_pdata;
-	apq8064_pm8921_platform_data.regulator_pdatas =
-		msm8064_pm8921_regulator_pdata;
-	apq8064_pm8921_platform_data.num_regulators =
-		msm8064_pm8921_regulator_pdata_len;
+				&cm_qs600_ssbi_pm8821_pdata;
+	cm_qs600_pm8921_platform_data.regulator_pdatas =
+		cm_qs600_pm8921_regulator_pdata;
+	cm_qs600_pm8921_platform_data.num_regulators =
+		cm_qs600_pm8921_regulator_pdata_len;
 
-	apq8064_pm8921_chg_pdata.has_dc_supply = true;
-	apq8064_pm8921_chg_pdata.battery_less_hardware = 1;
+	cm_qs600_pm8921_chg_pdata.has_dc_supply = true;
+	cm_qs600_pm8921_chg_pdata.battery_less_hardware = 1;
 }
