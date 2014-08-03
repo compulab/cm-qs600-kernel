@@ -29,6 +29,7 @@
 #include <linux/android_pmem.h>
 #endif
 #include <linux/i2c.h>
+#include <linux/i2c/at24.h>
 #include <linux/spi/spi.h>
 #include <linux/usb/msm_hsusb.h>
 #include <linux/usb/android.h>
@@ -2062,6 +2063,46 @@ static void __init cm_qs600_init_dsps(void)
 	platform_device_register(&msm_dsps_device_8064);
 }
 
+#ifdef CONFIG_EEPROM_AT24
+static struct at24_platform_data eeprom_24c02 = {
+	.byte_len	= 256,
+	.page_size	= 16,
+	.flags		= AT24_FLAG_IRUGO,
+	.setup		= NULL,
+	.context	= NULL,
+};
+#endif
+
+static struct i2c_board_info cm_qs600_i2c1_board_info[] __initdata = {
+#ifdef CONFIG_EEPROM_AT24
+	{
+		/* 24c02 EEPROM on the module board */
+		I2C_BOARD_INFO("24c02", 0x50),
+		.platform_data = &eeprom_24c02,
+	},
+#endif
+};
+
+static struct i2c_board_info cm_qs600_i2c3_board_info[] __initdata = {
+#ifdef CONFIG_EEPROM_AT24
+	{
+		/* 24c02 EEPROM on the module board */
+		I2C_BOARD_INFO("24c02", 0x50),
+		.platform_data = &eeprom_24c02,
+	},
+#endif
+};
+
+static struct i2c_board_info cm_qs600_i2c5_board_info[] __initdata = {
+#ifdef CONFIG_EEPROM_AT24
+	{
+		/* 24c02 EEPROM on the base board */
+		I2C_BOARD_INFO("24c02", 0x50),
+		.platform_data = &eeprom_24c02,
+	},
+#endif
+};
+
 #define I2C_CM_QS600			BIT(0)
 
 struct i2c_registry {
@@ -2072,6 +2113,24 @@ struct i2c_registry {
 };
 
 static struct i2c_registry cm_qs600_i2c_devices[] __initdata = {
+	{
+		I2C_CM_QS600,
+		APQ_8064_GSBI1_QUP_I2C_BUS_ID,
+		cm_qs600_i2c1_board_info,
+		ARRAY_SIZE(cm_qs600_i2c1_board_info),
+	},
+	{
+		I2C_CM_QS600,
+		APQ_8064_GSBI3_QUP_I2C_BUS_ID,
+		cm_qs600_i2c3_board_info,
+		ARRAY_SIZE(cm_qs600_i2c3_board_info),
+	},
+	{
+		I2C_CM_QS600,
+		APQ_8064_GSBI5_QUP_I2C_BUS_ID,
+		cm_qs600_i2c5_board_info,
+		ARRAY_SIZE(cm_qs600_i2c5_board_info),
+	},
 };
 
 static void __init cm_qs600_register_i2c_devices(void)
