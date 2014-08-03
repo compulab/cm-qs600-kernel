@@ -1815,10 +1815,11 @@ cm_qs600_pm8921_device_rpm_regulator __devinitdata = {
 	},
 };
 
-static struct platform_device *common_not_mpq_devices[] __initdata = {
+static struct platform_device *cm_qs600_qup_i2c_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
 	&apq8064_device_qup_i2c_gsbi3,
 	&apq8064_device_qup_i2c_gsbi4,
+	&mpq8064_device_qup_i2c_gsbi5,
 };
 
 static struct platform_device *early_common_devices[] __initdata = {
@@ -2166,8 +2167,8 @@ static void __init cm_qs600_init(void)
 	platform_device_register(&cm_qs600_device_ext_ts_sw_vreg);
 
 	platform_add_devices(common_devices, ARRAY_SIZE(common_devices));
-	platform_add_devices(common_not_mpq_devices,
-			     ARRAY_SIZE(common_not_mpq_devices));
+	platform_add_devices(cm_qs600_qup_i2c_gsbi_devices,
+			     ARRAY_SIZE(cm_qs600_qup_i2c_gsbi_devices));
 
 	cm_qs600_pm8xxx_gpio_mpp_init();
 	apq8064_init_mmc();

@@ -155,7 +155,6 @@ static struct gpiomux_setting hdmi_active_2_cfg = {
 	.pull = GPIOMUX_PULL_DOWN,
 };
 
-#if 0
 static struct gpiomux_setting gsbi5_suspended_cfg = {
 	.func = GPIOMUX_FUNC_2,
 	.drv = GPIOMUX_DRV_12MA,
@@ -167,7 +166,6 @@ static struct gpiomux_setting gsbi5_active_cfg = {
 	.drv = GPIOMUX_DRV_12MA,
 	.pull = GPIOMUX_PULL_NONE,
 };
-#endif
 
 static struct msm_gpiomux_config cm_qs600_hdmi_configs[] __initdata = {
 	{
@@ -351,7 +349,6 @@ static struct msm_gpiomux_config wcnss_5wire_interface[] = {
 	},
 };
 
-#if 0
 static struct msm_gpiomux_config mpq8064_gsbi5_i2c_configs[] __initdata = {
 	{
 		.gpio      = 53,			/* GSBI5 I2C QUP SDA */
@@ -368,7 +365,6 @@ static struct msm_gpiomux_config mpq8064_gsbi5_i2c_configs[] __initdata = {
 		},
 	},
 };
-#endif
 
 #ifdef CONFIG_MMC_MSM_SDC2_SUPPORT
 static struct gpiomux_setting sdc2_clk_active_cfg = {
@@ -551,6 +547,8 @@ void __init cm_qs600_init_gpiomux(void)
 
 	msm_gpiomux_install(cm_qs600_gsbi_configs,
 			    ARRAY_SIZE(cm_qs600_gsbi_configs));
+	msm_gpiomux_install(mpq8064_gsbi5_i2c_configs,
+			    ARRAY_SIZE(mpq8064_gsbi5_i2c_configs));
 
 	msm_gpiomux_install(cm_qs600_slimbus_config,
 			    ARRAY_SIZE(cm_qs600_slimbus_config));
