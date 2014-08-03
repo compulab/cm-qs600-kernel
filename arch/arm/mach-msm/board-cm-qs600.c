@@ -1986,8 +1986,13 @@ static struct slim_boardinfo cm_qs600_slim_devices[] = {
 	/* add more slimbus slaves as needed */
 };
 
+/*
+ * clk_freq recommended for QUP I2C is 384kHz.
+ * Some devices seem to behave better when clk_freq is lower,
+ * e.g. 100kHz.
+ */
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi1_pdata = {
-	.clk_freq = 100000,
+	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
 };
 
@@ -1997,42 +2002,45 @@ static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi3_pdata = {
 };
 
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi4_pdata = {
-	.clk_freq = 100000,
+	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
 };
 
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi5_pdata = {
-	.clk_freq = 100000,
+	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
 };
 
+#define GSBI_I2C_MODE_CODE		0x20
 #define GSBI_DUAL_MODE_CODE		0x60
 #define MSM_GSBI1_PHYS			0x12440000
+#define MSM_GSBI4_PHYS			0x16300000
+
 static void __init cm_qs600_i2c_init(void)
 {
 	void __iomem *gsbi_mem;
 
+	/* I2C-0 */
 	apq8064_device_qup_i2c_gsbi1.dev.platform_data =
-					&cm_qs600_i2c_qup_gsbi1_pdata;
+		&cm_qs600_i2c_qup_gsbi1_pdata;
 	gsbi_mem = ioremap_nocache(MSM_GSBI1_PHYS, 4);
 	writel_relaxed(GSBI_DUAL_MODE_CODE, gsbi_mem);
+	cm_qs600_i2c_qup_gsbi1_pdata.use_gsbi_shared_mode = 1;
 	/* Ensure protocol code is written before proceeding */
 	wmb();
 	iounmap(gsbi_mem);
-	cm_qs600_i2c_qup_gsbi1_pdata.use_gsbi_shared_mode = 1;
-	apq8064_device_qup_i2c_gsbi3.dev.platform_data =
-					&cm_qs600_i2c_qup_gsbi3_pdata;
-	apq8064_device_qup_i2c_gsbi1.dev.platform_data =
-					&cm_qs600_i2c_qup_gsbi1_pdata;
 
-	/* Add GSBI4 I2C pdata for non-fusion3 SGLTE2 */
-	if (socinfo_get_platform_subtype() !=
-				PLATFORM_SUBTYPE_SGLTE2) {
-		apq8064_device_qup_i2c_gsbi4.dev.platform_data =
-					&cm_qs600_i2c_qup_gsbi4_pdata;
-	}
+	/* I2C-3 */
+	apq8064_device_qup_i2c_gsbi3.dev.platform_data =
+		&cm_qs600_i2c_qup_gsbi3_pdata;
+
+	/* I2C-4 */
+	apq8064_device_qup_i2c_gsbi4.dev.platform_data =
+		&cm_qs600_i2c_qup_gsbi4_pdata;
+
+	/* I2C-5 */
 	mpq8064_device_qup_i2c_gsbi5.dev.platform_data =
-					&cm_qs600_i2c_qup_gsbi5_pdata;
+		&cm_qs600_i2c_qup_gsbi5_pdata;
 }
 
 static int cm_qs600_ethernet_init(void)
@@ -2053,14 +2061,7 @@ static void __init cm_qs600_init_dsps(void)
 	platform_device_register(&msm_dsps_device_8064);
 }
 
-#define I2C_SURF			BIT(0)
-#define I2C_FFA				BIT(1)
-#define I2C_RUMI			BIT(2)
-#define I2C_SIM				BIT(3)
-#define I2C_LIQUID			BIT(4)
-#define I2C_MPQ_CDP			BIT(5)
-#define I2C_MPQ_HRD			BIT(6)
-#define I2C_MPQ_DTV			BIT(7)
+#define I2C_CM_QS600			BIT(0)
 
 struct i2c_registry {
 	u8			machs;
@@ -2077,15 +2078,7 @@ static void __init cm_qs600_register_i2c_devices(void)
 	u8 mach_mask = 0;
 	int i;
 
-	/* Build the matching 'supported_machs' bitmask */
-	if (machine_is_apq8064_cdp())
-		mach_mask = I2C_SURF;
-	else if (machine_is_apq8064_mtp())
-		mach_mask = I2C_FFA;
-	else if (machine_is_apq8064_liquid())
-		mach_mask = I2C_LIQUID;
-	else
-		pr_err("unmatched machine ID in register_i2c_devices\n");
+	mach_mask = I2C_CM_QS600;
 
 	/* Run the array and install devices as appropriate */
 	for (i = 0; i < ARRAY_SIZE(cm_qs600_i2c_devices); ++i) {
