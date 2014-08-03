@@ -2194,6 +2194,10 @@ static void __init cm_qs600_init(void)
 	apq8064_init_fb();
 	apq8064_init_gpu();
 	platform_add_devices(apq8064_footswitch, apq8064_num_footswitch);
+
+#ifdef CONFIG_SATA_AHCI_MSM
+	platform_device_register(&apq8064_device_sata);
+#endif
 }
 
 MACHINE_START(CM_QS600, "CompuLab APQ8064 CM-QS600 Module")
