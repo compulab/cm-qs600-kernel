@@ -1728,6 +1728,21 @@ static int __init cm_qs600_pcie_enabled(void)
 		(readl_relaxed(QFPROM_RAW_OEM_CONFIG_ROW0_LSB) & BIT(4)));
 }
 
+/*
+ * Provide one-time reset to the Ethernet controller,
+ * working around an hardware bug.
+ */
+static void __init cm_qs600_pcie_workaround_rst_bug(void)
+{
+	int gpio = msm_pcie_platform_data.gpio[MSM_PCIE_GPIO_RST_N].num;
+
+	msm_pcie_platform_data.gpio[MSM_PCIE_GPIO_RST_N].num = -EINVAL;
+	gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "rst_n");
+	mdelay(1);
+	gpio_free(gpio);
+	gpio_request_one(gpio, GPIOF_IN, "rst_n");
+}
+
 static void __init cm_qs600_pcie_init(void)
 {
 	struct msm_xo_voter *xo_ptr;
@@ -1738,6 +1753,9 @@ static void __init cm_qs600_pcie_init(void)
 	}
 
 	pr_info("PCIe: enabled \n");
+
+	cm_qs600_pcie_workaround_rst_bug();
+
 	msm_device_pcie.dev.platform_data = &msm_pcie_platform_data;
 	xo_ptr = msm_xo_get(MSM_XO_TCXO_A0, "Pcie clock buffer for DB");
 	msm_xo_mode_vote(xo_ptr, MSM_XO_MODE_ON);
