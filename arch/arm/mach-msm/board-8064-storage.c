@@ -82,7 +82,17 @@ static struct msm_mmc_reg_data mmc_vdd_io_reg_data[MAX_SDCC_CONTROLLER] = {
 		 * during sleep.
 		 */
 		.lpm_uA = 2000,
-	}
+	},
+	/* SDCC4 : SDIO WLAN/BT IC */
+	[SDCC4] = {
+		.name = "sdc_vdd_io",
+		.always_on = 1,
+		.high_vol_level = 1800000,
+		.low_vol_level = 1800000,
+		.lpm_sup = 1,
+		.hpm_uA = 200000, /* 200mA */
+		.lpm_uA = 2000,
+	},
 };
 
 static struct msm_mmc_slot_reg_data mmc_slot_vreg_data[MAX_SDCC_CONTROLLER] = {
@@ -95,7 +105,11 @@ static struct msm_mmc_slot_reg_data mmc_slot_vreg_data[MAX_SDCC_CONTROLLER] = {
 	[SDCC3] = {
 		.vdd_data = &mmc_vdd_reg_data[SDCC3],
 		.vdd_io_data = &mmc_vdd_io_reg_data[SDCC3],
-	}
+	},
+	/* SDCC4 : SDIO WLAN/BT IC */
+	[SDCC4] = {
+		.vdd_io_data = &mmc_vdd_io_reg_data[SDCC4],
+	},
 };
 
 /* SDC1 pad data */
@@ -327,6 +341,7 @@ static struct mmc_platform_data sdc4_data = {
 	.sup_clk_table	= sdc4_sup_clk_rates,
 	.sup_clk_cnt	= ARRAY_SIZE(sdc4_sup_clk_rates),
 	.pin_data	= &mmc_slot_pin_data[SDCC4],
+	.vreg_data	= &mmc_slot_vreg_data[SDCC4],
 	.sdiowakeup_irq = MSM_GPIO_TO_INT(65),
 	.msm_bus_voting_data = &sps_to_ddr_bus_voting_data,
 };

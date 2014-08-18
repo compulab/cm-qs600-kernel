@@ -164,6 +164,7 @@ VREG_CONSUMERS(S3) = {
 VREG_CONSUMERS(S4) = {
 	REGULATOR_SUPPLY("8921_s4",		NULL),
 	REGULATOR_SUPPLY("sdc_vdd_io",		"msm_sdcc.1"),
+	REGULATOR_SUPPLY("sdc_vdd_io",		"msm_sdcc.4"),
 	REGULATOR_SUPPLY("VDDIO_CDC",		"tabla-slim"),
 	REGULATOR_SUPPLY("CDC_VDD_CP",		"tabla-slim"),
 	REGULATOR_SUPPLY("CDC_VDDA_TX",		"tabla-slim"),
