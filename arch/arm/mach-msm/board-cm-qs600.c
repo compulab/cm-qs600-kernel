@@ -37,6 +37,7 @@
 #include <linux/mfd/wcd9xxx/core.h>
 #include <linux/mfd/wcd9xxx/pdata.h>
 #include <linux/platform_data/qcom_crypto_device.h>
+#include <linux/wlan_plat.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/hardware/gic.h>
@@ -1253,6 +1254,69 @@ static struct platform_device qcedev_device = {
 };
 #endif
 
+
+#define CM_QS600_WLAN_PWD_L		PM8921_GPIO_PM_TO_SYS(43)
+#define CM_QS600_WAKE_ON_WLAN		PM8921_GPIO_PM_TO_SYS(42)
+#define CM_QS600_WLAN_BT_GPIO10		2
+#define CM_QS600_BT_PWD_L		PM8921_GPIO_PM_TO_SYS(44)
+#define CM_QS600_HOST_WKUP_BT		89
+#define CM_QS600_BT_WKUP_HOST		CM_QS600_WAKE_ON_WLAN
+
+static struct gpio wlan_bt_gpios[] = {
+	{ CM_QS600_WAKE_ON_WLAN,	GPIOF_IN,		"wake on wlan_or_bt" },
+
+	{ CM_QS600_WLAN_PWD_L,		GPIOF_OUT_INIT_LOW,	"wlan pwd_l" },
+	{ CM_QS600_BT_PWD_L,		GPIOF_OUT_INIT_LOW,	"bt pwd_l" },
+	{ CM_QS600_WLAN_BT_GPIO10,	GPIOF_OUT_INIT_LOW,	"wlan_bt gpio10" },
+	{ CM_QS600_HOST_WKUP_BT,	GPIOF_OUT_INIT_HIGH,	"wake up bt" },
+};
+
+static int cm_qs600_wlan_bt_init(void)
+{
+	int ret;
+
+	ret = gpio_request_array(wlan_bt_gpios, ARRAY_SIZE(wlan_bt_gpios));
+	if (ret) {
+		pr_warn("%s: could not acquire GPIOs \n", __func__);
+	}
+
+	return ret;
+}
+
+static int cm_qs600_wlan_power(int on)
+{
+	pr_info("%s: [%s] \n", __func__, (on ? "ON" : "OFF"));
+
+	/*
+	 * Power sequence both WLAN and BT
+	 *
+	 * Ref:
+	 * QCA6234 HW Design Guide, Power Sequence
+	 */
+	gpio_set_value(CM_QS600_WLAN_PWD_L, 0);
+	gpio_set_value(CM_QS600_BT_PWD_L, 0);
+
+	if (on) {
+		mdelay(5);
+		gpio_set_value(CM_QS600_WLAN_PWD_L, 1);
+		gpio_set_value(CM_QS600_BT_PWD_L, 1);
+	}
+
+	return 0;
+}
+
+static struct wifi_platform_data ath6kl_wlan_control = {
+	.set_power = cm_qs600_wlan_power,
+};
+
+static struct platform_device msm_wlan_power_device = {
+	.name = "ath6kl_power",
+	.dev            = {
+		.platform_data = &ath6kl_wlan_control,
+	},
+};
+
+
 static struct tsens_platform_data apq_tsens_pdata  = {
 		.tsens_factor		= 1000,
 		.hw_type		= APQ_8064,
@@ -1800,6 +1864,7 @@ static struct platform_device *common_devices[] __initdata = {
 	&apq8064_device_gadget_peripheral,
 	&apq8064_device_hsusb_host,
 	&android_usb_device,
+	&msm_wlan_power_device,
 	&msm_device_iris_fm,
 	&cm_qs600_fmem_device,
 #if (defined CONFIG_ANDROID_PMEM) && !(defined CONFIG_MSM_MULTIMEDIA_USE_ION)
@@ -2207,6 +2272,7 @@ static void __init cm_qs600_init(void)
 #ifdef CONFIG_SATA_AHCI_MSM
 	platform_device_register(&apq8064_device_sata);
 #endif
+	cm_qs600_wlan_bt_init();
 }
 
 MACHINE_START(CM_QS600, "CompuLab APQ8064 CM-QS600 Module")
