@@ -1819,17 +1819,21 @@ cm_qs600_pm8921_device_rpm_regulator __devinitdata = {
 	},
 };
 
-static struct platform_device *cm_qs600_qup_i2c_gsbi_devices[] __initdata = {
+static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
 	&apq8064_device_qup_i2c_gsbi3,
 	&apq8064_device_qup_i2c_gsbi4,
 	&mpq8064_device_qup_i2c_gsbi5,
+
+	&apq8064_device_qup_spi_gsbi5,
+
+	&apq8064_device_uart_gsbi1,	/* ttyHSL1 */
+	&apq8064_device_uart_gsbi7,	/* ttyHSL0 */
 };
 
 static struct platform_device *early_common_devices[] __initdata = {
 	&apq8064_device_acpuclk,
 	&apq8064_device_dmov,
-	&apq8064_device_qup_spi_gsbi5,
 };
 
 static struct platform_device *pm8921_common_devices[] __initdata = {
@@ -1958,8 +1962,6 @@ static struct platform_device *common_devices[] __initdata = {
 };
 
 static struct platform_device *cdp_devices[] __initdata = {
-	&apq8064_device_uart_gsbi1,
-	&apq8064_device_uart_gsbi7,
 	&msm_device_sps_apq8064,
 #ifdef CONFIG_MSM_ROTATOR
 	&msm_rotator_device,
@@ -1968,14 +1970,20 @@ static struct platform_device *cdp_devices[] __initdata = {
 	&msm8064_cpu_slp_status,
 };
 
-static struct msm_spi_platform_data apq8064_qup_spi_gsbi5_pdata = {
-	.max_clock_speed = 1100000,
+
+static struct msm_spi_platform_data cm_qs600_spi_qup_gsbi5_pdata = {
+	.max_clock_speed = 24000000,
 };
 
-#define KS8851_IRQ_GPIO		43
-
-static struct spi_board_info spi_board_info[] __initdata = {
+static struct spi_board_info cm_qs600_spi_devices[] __initdata = {
 };
+
+static void __init cm_qs600_register_spi_devices(void)
+{
+	spi_register_board_info(cm_qs600_spi_devices,
+				ARRAY_SIZE(cm_qs600_spi_devices));
+}
+
 
 static struct slim_boardinfo cm_qs600_slim_devices[] = {
 	{
@@ -2044,6 +2052,13 @@ static void __init cm_qs600_i2c_init(void)
 	/* I2C-5 */
 	mpq8064_device_qup_i2c_gsbi5.dev.platform_data =
 		&cm_qs600_i2c_qup_gsbi5_pdata;
+}
+
+static void __init cm_qs600_spi_init(void)
+{
+	/* GSBI-5 */
+	apq8064_device_qup_spi_gsbi5.dev.platform_data =
+		&cm_qs600_spi_qup_gsbi5_pdata;
 }
 
 static int cm_qs600_ethernet_init(void)
@@ -2205,11 +2220,10 @@ static void __init cm_qs600_init(void)
 		pr_err("Failed to initialize XO votes\n");
 	msm_clock_init(&apq8064_clock_init_data);
 	cm_qs600_init_gpiomux();
-	cm_qs600_i2c_init();
-	cm_qs600_register_i2c_devices();
 
-	apq8064_device_qup_spi_gsbi5.dev.platform_data =
-						&apq8064_qup_spi_gsbi5_pdata;
+	cm_qs600_i2c_init();
+	cm_qs600_spi_init();
+
 	cm_qs600_init_pmic();
 
 	android_usb_pdata.swfi_latency =
@@ -2227,8 +2241,8 @@ static void __init cm_qs600_init(void)
 	platform_device_register(&cm_qs600_device_ext_ts_sw_vreg);
 
 	platform_add_devices(common_devices, ARRAY_SIZE(common_devices));
-	platform_add_devices(cm_qs600_qup_i2c_gsbi_devices,
-			     ARRAY_SIZE(cm_qs600_qup_i2c_gsbi_devices));
+	platform_add_devices(cm_qs600_gsbi_devices,
+			     ARRAY_SIZE(cm_qs600_gsbi_devices));
 
 	cm_qs600_pm8xxx_gpio_mpp_init();
 	apq8064_init_mmc();
@@ -2243,8 +2257,10 @@ static void __init cm_qs600_init(void)
 	cm_qs600_ethernet_init();
 	msm_rotator_set_split_iommu_domain();
 	platform_add_devices(cdp_devices, ARRAY_SIZE(cdp_devices));
-	spi_register_board_info(spi_board_info,
-				ARRAY_SIZE(spi_board_info));
+
+	cm_qs600_register_i2c_devices();
+	cm_qs600_register_spi_devices();
+
 	apq8064_init_fb();
 	apq8064_init_gpu();
 	platform_add_devices(apq8064_footswitch, apq8064_num_footswitch);
