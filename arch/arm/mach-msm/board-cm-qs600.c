@@ -31,6 +31,7 @@
 #include <linux/i2c.h>
 #include <linux/i2c/at24.h>
 #include <linux/spi/spi.h>
+#include <linux/spi/flash.h>
 #include <linux/usb/msm_hsusb.h>
 #include <linux/usb/android.h>
 #include <linux/slimbus/slimbus.h>
@@ -38,6 +39,7 @@
 #include <linux/mfd/wcd9xxx/pdata.h>
 #include <linux/platform_data/qcom_crypto_device.h>
 #include <linux/wlan_plat.h>
+#include <linux/mtd/partitions.h>
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <asm/hardware/gic.h>
@@ -1970,11 +1972,39 @@ static struct platform_device *cdp_devices[] __initdata = {
 };
 
 
+#if defined(CONFIG_MTD_M25P80) || defined(CONFIG_MTD_M25P80_MODULE)
+static struct mtd_partition cm_qs600_spi_flash_partitions[] = {
+	{
+		.name	= "all",
+		.offset	= 0,
+		.size	= MTDPART_SIZ_FULL,
+	},
+};
+
+/* do not specify 'type' for JDEC compliant flash chip */
+static struct flash_platform_data cm_qs600_spi_flash_data = {
+	.name		= "spi_flash",
+	.parts		= cm_qs600_spi_flash_partitions,
+	.nr_parts	= ARRAY_SIZE(cm_qs600_spi_flash_partitions),
+};
+#endif
+
 static struct msm_spi_platform_data cm_qs600_spi_qup_gsbi4_pdata = {
 	.max_clock_speed = 24000000,
 };
 
 static struct spi_board_info cm_qs600_spi_devices[] __initdata = {
+#if defined(CONFIG_MTD_M25P80) || defined(CONFIG_MTD_M25P80_MODULE)
+	{
+		/* The modalias must be the same as spi device driver name */
+		.modalias	= "m25p80",
+		.max_speed_hz	= 20000000,
+		.bus_num	= 0,
+		.chip_select	= 0,
+		.mode		= SPI_MODE_0,
+		.platform_data	= &cm_qs600_spi_flash_data,
+	},
+#endif
 };
 
 static void __init cm_qs600_register_spi_devices(void)
