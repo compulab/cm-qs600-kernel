@@ -1822,10 +1822,9 @@ cm_qs600_pm8921_device_rpm_regulator __devinitdata = {
 static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
 	&apq8064_device_qup_i2c_gsbi3,
-	&apq8064_device_qup_i2c_gsbi4,
 	&mpq8064_device_qup_i2c_gsbi5,
 
-	&apq8064_device_qup_spi_gsbi5,
+	&apq8064_device_qup_spi_gsbi4,
 
 	&apq8064_device_uart_gsbi1,	/* ttyHSL1 */
 	&apq8064_device_uart_gsbi7,	/* ttyHSL0 */
@@ -1971,7 +1970,7 @@ static struct platform_device *cdp_devices[] __initdata = {
 };
 
 
-static struct msm_spi_platform_data cm_qs600_spi_qup_gsbi5_pdata = {
+static struct msm_spi_platform_data cm_qs600_spi_qup_gsbi4_pdata = {
 	.max_clock_speed = 24000000,
 };
 
@@ -2012,11 +2011,6 @@ static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi3_pdata = {
 	.src_clk_rate = 24000000,
 };
 
-static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi4_pdata = {
-	.clk_freq = 384000,
-	.src_clk_rate = 24000000,
-};
-
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi5_pdata = {
 	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
@@ -2045,10 +2039,6 @@ static void __init cm_qs600_i2c_init(void)
 	apq8064_device_qup_i2c_gsbi3.dev.platform_data =
 		&cm_qs600_i2c_qup_gsbi3_pdata;
 
-	/* I2C-4 */
-	apq8064_device_qup_i2c_gsbi4.dev.platform_data =
-		&cm_qs600_i2c_qup_gsbi4_pdata;
-
 	/* I2C-5 */
 	mpq8064_device_qup_i2c_gsbi5.dev.platform_data =
 		&cm_qs600_i2c_qup_gsbi5_pdata;
@@ -2056,9 +2046,9 @@ static void __init cm_qs600_i2c_init(void)
 
 static void __init cm_qs600_spi_init(void)
 {
-	/* GSBI-5 */
-	apq8064_device_qup_spi_gsbi5.dev.platform_data =
-		&cm_qs600_spi_qup_gsbi5_pdata;
+	/* GSBI-4 */
+	apq8064_device_qup_spi_gsbi4.dev.platform_data =
+		&cm_qs600_spi_qup_gsbi4_pdata;
 }
 
 static int cm_qs600_ethernet_init(void)
