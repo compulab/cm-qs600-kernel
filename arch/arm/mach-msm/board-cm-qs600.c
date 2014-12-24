@@ -2201,6 +2201,13 @@ static void __init cm_qs600_register_i2c_devices(void)
 						cm_qs600_i2c_devices[i].info,
 						cm_qs600_i2c_devices[i].len);
 	}
+
+#ifdef CONFIG_MSM_CAMERA_V4L2
+	if (cm_qs600_camera_i2c_devices[0].machs & mach_mask)
+		i2c_register_board_info(cm_qs600_camera_i2c_devices[0].bus,
+					cm_qs600_camera_i2c_devices[0].info,
+					cm_qs600_camera_i2c_devices[0].len);
+#endif
 }
 
 static void __init apq8064ab_update_retention_spm(void)
@@ -2303,6 +2310,9 @@ static void __init cm_qs600_init(void)
 	apq8064_init_gpu();
 	platform_add_devices(apq8064_footswitch, apq8064_num_footswitch);
 
+#ifdef CONFIG_MSM_CAMERA_V4L2
+	cm_qs600_init_camera();
+#endif
 #ifdef CONFIG_SATA_AHCI_MSM
 	platform_device_register(&apq8064_device_sata);
 #endif

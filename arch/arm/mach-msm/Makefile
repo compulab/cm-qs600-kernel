@@ -319,6 +319,9 @@ endif
 ifdef CONFIG_MSM_RPM_SMD
 	obj-$(CONFIG_ARCH_MSM8974) += lpm_levels.o lpm_resources.o
 endif
+ifdef CONFIG_MSM_CAMERA_V4L2
+	obj-$(CONFIG_MACH_CM_QS600) += board-cm-qs600-camera.o
+endif
 obj-$(CONFIG_MSM_MPM_OF) += mpm-of.o
 obj-$(CONFIG_MSM_MPM) += mpm.o
 obj-$(CONFIG_MSM_RPM_STATS_LOG) += rpm_stats.o rpm_master_stat.o

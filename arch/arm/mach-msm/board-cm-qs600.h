@@ -93,8 +93,8 @@ struct i2c_registry {
 #define I2C_CM_QS600			BIT(0)
 
 
-extern struct msm_camera_board_info apq8064_camera_board_info;
-void apq8064_init_cam(void);
+extern struct i2c_registry cm_qs600_camera_i2c_devices[];
+void cm_qs600_init_camera(void);
 
 
 unsigned char apq8064_hdmi_as_primary_selected(void);
