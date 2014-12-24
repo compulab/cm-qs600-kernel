@@ -77,13 +77,25 @@ void apq8064_init_mmc(void);
 void cm_qs600_init_gpiomux(void);
 void cm_qs600_init_pmic(void);
 
-extern struct msm_camera_board_info apq8064_camera_board_info;
-void apq8064_init_cam(void);
 
 #define APQ_8064_GSBI1_QUP_I2C_BUS_ID	0
 #define APQ_8064_GSBI3_QUP_I2C_BUS_ID	3
 #define APQ_8064_GSBI4_QUP_I2C_BUS_ID	4
 #define APQ_8064_GSBI5_QUP_I2C_BUS_ID	5
+
+struct i2c_registry {
+	u8			machs;
+	int			bus;
+	struct i2c_board_info	*info;
+	int			len;
+};
+
+#define I2C_CM_QS600			BIT(0)
+
+
+extern struct msm_camera_board_info apq8064_camera_board_info;
+void apq8064_init_cam(void);
+
 
 unsigned char apq8064_hdmi_as_primary_selected(void);
 unsigned char apq8064_mhl_display_enabled(void);

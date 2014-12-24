@@ -78,6 +78,16 @@
  */
 #define CM_QS600_GSBI4_AS_SPI
 
+#ifndef CM_QS600_GSBI4_AS_SPI
+#define CM_QS600_GSBI4_AS_UART
+#endif
+
+#ifdef CONFIG_MSM_CAMERA_V4L2
+#undef CM_QS600_GSBI4_AS_SPI
+#undef CM_QS600_GSBI4_AS_UART
+#define CM_QS600_GSBI4_AS_I2C
+#endif
+
 #define MSM_PMEM_ADSP_SIZE		0x7800000
 #define MSM_PMEM_AUDIO_SIZE		0x4CF000
 #define MSM_PMEM_SIZE			0x4000000 /* 64 Mbytes */
@@ -1830,9 +1840,11 @@ static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
 	&apq8064_device_qup_i2c_gsbi3,
 	&mpq8064_device_qup_i2c_gsbi5,
-#ifdef CM_QS600_GSBI4_AS_SPI
+#if defined (CM_QS600_GSBI4_AS_I2C)
+	&apq8064_device_qup_i2c_gsbi4,
+#elif defined (CM_QS600_GSBI4_AS_SPI)
 	&apq8064_device_qup_spi_gsbi4,
-#else
+#elif defined (CM_QS600_GSBI4_AS_UART)
 	&apq8064_device_uart_gsbi4,	/* ttyHSL1 */
 #endif
 	&apq8064_device_uart_gsbi7,	/* ttyHSL0 */
@@ -2047,6 +2059,11 @@ static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi3_pdata = {
 	.src_clk_rate = 24000000,
 };
 
+static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi4_pdata = {
+	.clk_freq = 384000,
+	.src_clk_rate = 24000000,
+};
+
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi5_pdata = {
 	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
@@ -2074,6 +2091,10 @@ static void __init cm_qs600_i2c_init(void)
 	/* I2C-3 */
 	apq8064_device_qup_i2c_gsbi3.dev.platform_data =
 		&cm_qs600_i2c_qup_gsbi3_pdata;
+
+	/* I2C-4 */
+	apq8064_device_qup_i2c_gsbi4.dev.platform_data =
+		&cm_qs600_i2c_qup_gsbi4_pdata;
 
 	/* I2C-5 */
 	mpq8064_device_qup_i2c_gsbi5.dev.platform_data =
@@ -2143,15 +2164,6 @@ static struct i2c_board_info cm_qs600_i2c5_board_info[] __initdata = {
 		.platform_data = &eeprom_24c02,
 	},
 #endif
-};
-
-#define I2C_CM_QS600			BIT(0)
-
-struct i2c_registry {
-	u8			machs;
-	int			bus;
-	struct i2c_board_info	*info;
-	int			len;
 };
 
 static struct i2c_registry cm_qs600_i2c_devices[] __initdata = {
