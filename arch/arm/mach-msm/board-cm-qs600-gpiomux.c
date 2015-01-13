@@ -25,24 +25,6 @@
 #include "devices.h"
 #include "board-cm-qs600.h"
 
-#if defined(CONFIG_ATL1C) || defined(CONFIG_ATL1C_MODULE)
-static struct gpiomux_setting gpio_eth_config = {
-	.pull = GPIOMUX_PULL_NONE,
-	.drv = GPIOMUX_DRV_8MA,
-	.func = GPIOMUX_FUNC_GPIO,
-};
-
-static struct msm_gpiomux_config cm_qs600_ethernet_configs[] = {
-	{
-		.gpio = 55,
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_eth_config,
-			[GPIOMUX_ACTIVE] = &gpio_eth_config,
-		}
-	},
-};
-#endif
-
 /* Chip selects for SPI clients */
 static struct gpiomux_setting gpio_spi_cs_config = {
 	.func = GPIOMUX_FUNC_GPIO,
@@ -486,11 +468,6 @@ void __init cm_qs600_init_gpiomux(void)
 		pr_err(KERN_ERR "msm_gpiomux_init failed %d\n", rc);
 		return;
 	}
-
-#if defined(CONFIG_ATL1C) || defined(CONFIG_ATL1C_MODULE)
-	msm_gpiomux_install(cm_qs600_ethernet_configs,
-			    ARRAY_SIZE(cm_qs600_ethernet_configs));
-#endif
 
 	msm_gpiomux_install(cm_qs600_gsbi_configs,
 			    ARRAY_SIZE(cm_qs600_gsbi_configs));
