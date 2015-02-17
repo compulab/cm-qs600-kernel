@@ -193,18 +193,22 @@ static void lvds_init(struct msm_fb_data_type *mfd)
 			lvds_phy_cfg0 = BIT(6);
 		}
 	} else if (mfd->panel_info.bpp == 18) {
+		/*
+		 * Mapping R7,R6..R0 to LVDS, take 6 MSBs - R7,R6..R2. 
+		 * Ditto G and B. 
+		 */ 
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D0_3_TO_0 */
-		MDP_OUTP(MDP_BASE +  0xc2014, 0x03040508);
+		MDP_OUTP(MDP_BASE +  0xc2014, 0x0506070a);
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D0_6_TO_4 */
-		MDP_OUTP(MDP_BASE +  0xc2018, 0x00000102);
+		MDP_OUTP(MDP_BASE +  0xc2018, 0x00020304);
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D1_3_TO_0 */
-		MDP_OUTP(MDP_BASE +  0xc201c, 0x0c0d1011);
+		MDP_OUTP(MDP_BASE +  0xc201c, 0x0e0f1213);
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D1_6_TO_4 */
-		MDP_OUTP(MDP_BASE +  0xc2020, 0x00090a0b);
+		MDP_OUTP(MDP_BASE +  0xc2020, 0x000b0c0d);
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D2_3_TO_0 */
-		MDP_OUTP(MDP_BASE +  0xc2024, 0x1518191a);
+		MDP_OUTP(MDP_BASE +  0xc2024, 0x1718191a);
 		/* MDP_LCDC_LVDS_MUX_CTL_FOR_D2_6_TO_4 */
-		MDP_OUTP(MDP_BASE +  0xc2028, 0x00121314);
+		MDP_OUTP(MDP_BASE +  0xc2028, 0x00141516);
 
 		if (mfd->panel_info.lvds.channel_mode ==
 			LVDS_DUAL_CHANNEL_MODE) {

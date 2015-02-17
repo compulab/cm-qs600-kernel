@@ -132,7 +132,7 @@ static int __init lvds_chimei_wxga_init(void)
 	pinfo->type = LVDS_PANEL;
 	pinfo->pdest = DISPLAY_1;
 	pinfo->wait_cycle = 0;
-	pinfo->bpp = 24;
+	pinfo->bpp = 18;
 	pinfo->fb_num = 2;
 	pinfo->clk_rate = 79400000;
 	pinfo->bl_max = 255;
