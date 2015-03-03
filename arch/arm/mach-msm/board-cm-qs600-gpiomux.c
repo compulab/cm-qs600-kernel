@@ -197,14 +197,14 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 	},
 
 	{
-		.gpio	= 10,			/* GSBI4 SPI MOSI */
+		.gpio	= 10,			/* GSBI4 SPI MOSI / UART TX */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
 		},
 	},
 	{
-		.gpio	= 11,			/* GSBI4 SPI MISO */
+		.gpio	= 11,			/* GSBI4 SPI MISO / UART RX */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,

@@ -73,6 +73,11 @@
 #include "sysmon.h"
 #include "board-cm-qs600.h"
 
+/*
+ * Configure GSBI4 as SPI bus or UART
+ */
+#define CM_QS600_GSBI4_AS_SPI
+
 #define MSM_PMEM_ADSP_SIZE		0x7800000
 #define MSM_PMEM_AUDIO_SIZE		0x4CF000
 #define MSM_PMEM_SIZE			0x4000000 /* 64 Mbytes */
@@ -1825,10 +1830,11 @@ static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
 	&apq8064_device_qup_i2c_gsbi3,
 	&mpq8064_device_qup_i2c_gsbi5,
-
+#ifdef CM_QS600_GSBI4_AS_SPI
 	&apq8064_device_qup_spi_gsbi4,
-
-	&apq8064_device_uart_gsbi1,	/* ttyHSL1 */
+#else
+	&apq8064_device_uart_gsbi4,	/* ttyHSL1 */
+#endif
 	&apq8064_device_uart_gsbi7,	/* ttyHSL0 */
 };
 
