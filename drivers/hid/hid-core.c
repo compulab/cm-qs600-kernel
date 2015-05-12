@@ -1092,6 +1092,7 @@ int hid_input_report(struct hid_device *hid, int type, u8 *data, int size, int i
 	struct hid_report *report;
 	char *buf;
 	unsigned int i;
+	unsigned int p = 0;
 	int ret = 0;
 
 	if (!hid)
@@ -1119,16 +1120,16 @@ int hid_input_report(struct hid_device *hid, int type, u8 *data, int size, int i
 		goto nomem;
 
 	/* dump the report */
-	snprintf(buf, HID_DEBUG_BUFSIZE - 1,
-			"\nreport (size %u) (%snumbered) = ", size, report_enum->numbered ? "" : "un");
-	hid_debug_event(hid, buf);
+	p += snprintf((buf + p), (HID_DEBUG_BUFSIZE - p),
+		      "\nreport (size %u) (%snumbered) = ", size, report_enum->numbered ? "" : "un");
 
 	for (i = 0; i < size; i++) {
-		snprintf(buf, HID_DEBUG_BUFSIZE - 1,
-				" %02x", data[i]);
-		hid_debug_event(hid, buf);
+		p += snprintf((buf + p), (HID_DEBUG_BUFSIZE - 1 - p),
+			      " %02x", data[i]);
 	}
-	hid_debug_event(hid, "\n");
+
+	p += snprintf((buf + p), (HID_DEBUG_BUFSIZE - p), "\n");
+	hid_debug_event(hid, buf);
 	kfree(buf);
 
 nomem:
