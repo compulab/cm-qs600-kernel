@@ -498,9 +498,7 @@ void __init cm_qs600_init_camera(void)
 	platform_device_register(&msm8960_device_i2c_mux_gsbi4);
 
 	platform_device_register(&msm8960_device_csiphy0);
-	platform_device_register(&msm8960_device_csiphy1);
 	platform_device_register(&msm8960_device_csid0);
-	platform_device_register(&msm8960_device_csid1);
 	platform_device_register(&msm8960_device_ispif);
 	platform_device_register(&msm8960_device_vfe);
 	platform_device_register(&msm8960_device_vpe);
