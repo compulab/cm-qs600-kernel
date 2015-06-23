@@ -1277,10 +1277,17 @@ static struct platform_device qcedev_device = {
 #define CM_QS600_WLAN_BT_GPIO10		2
 #define CM_QS600_BT_PWD_L		PM8921_GPIO_PM_TO_SYS(44)
 #define CM_QS600_HOST_WKUP_BT		89
-#define CM_QS600_BT_WKUP_HOST		CM_QS600_WAKE_ON_WLAN
+#define CM_QS600_BT_WKUP_HOST		PM8921_GPIO_PM_TO_SYS(19)
 
-static struct gpio wlan_bt_gpios[] = {
-	{ CM_QS600_WAKE_ON_WLAN,	GPIOF_IN,		"wake on wlan_or_bt" },
+#define CM_QS600_WLAN_ON		1
+#define CM_QS600_BT_ON			2
+
+static int cm_qs600_wlan_bt_state = 0;
+static DEFINE_MUTEX(cm_qs600_wlan_bt_mutex);
+
+static struct gpio wlan_bt_gpios[] __initdata = {
+	{ CM_QS600_WAKE_ON_WLAN,	GPIOF_IN,		"wake on wlan" },
+	{ CM_QS600_BT_WKUP_HOST,	GPIOF_IN,		"wake on bt" },
 
 	{ CM_QS600_WLAN_PWD_L,		GPIOF_OUT_INIT_LOW,	"wlan pwd_l" },
 	{ CM_QS600_BT_PWD_L,		GPIOF_OUT_INIT_LOW,	"bt pwd_l" },
@@ -1288,7 +1295,7 @@ static struct gpio wlan_bt_gpios[] = {
 	{ CM_QS600_HOST_WKUP_BT,	GPIOF_OUT_INIT_HIGH,	"wake up bt" },
 };
 
-static int cm_qs600_wlan_bt_init(void)
+static int __init cm_qs600_wlan_bt_init(void)
 {
 	int ret;
 
@@ -1300,16 +1307,16 @@ static int cm_qs600_wlan_bt_init(void)
 	return ret;
 }
 
-static int cm_qs600_wlan_power(int on)
+/*
+ * QCA6234 WLAN / BT power sequence
+ *
+ * Ref:
+ * QCA6234 HW Design Guide, Power Sequence
+ */
+static void cm_qs600_wlan_bt_power_sequence(int on)
 {
-	pr_info("%s: [%s] \n", __func__, (on ? "ON" : "OFF"));
+	pr_info("WLAN/BT: [%s] \n", (on ? "ON" : "OFF"));
 
-	/*
-	 * Power sequence both WLAN and BT
-	 *
-	 * Ref:
-	 * QCA6234 HW Design Guide, Power Sequence
-	 */
 	gpio_set_value(CM_QS600_WLAN_PWD_L, 0);
 	gpio_set_value(CM_QS600_BT_PWD_L, 0);
 
@@ -1318,7 +1325,30 @@ static int cm_qs600_wlan_power(int on)
 		gpio_set_value(CM_QS600_WLAN_PWD_L, 1);
 		gpio_set_value(CM_QS600_BT_PWD_L, 1);
 	}
+}
 
+static void cm_qs600_wlan_bt_power_control(int on, int mask)
+{
+	int new_state;
+
+	mutex_lock(&cm_qs600_wlan_bt_mutex);
+	new_state = cm_qs600_wlan_bt_state;
+
+	if (on)
+		new_state |= mask;
+	else
+		new_state &= ~mask;
+
+	if (!!cm_qs600_wlan_bt_state != !!new_state)
+		cm_qs600_wlan_bt_power_sequence(on);
+
+	cm_qs600_wlan_bt_state = new_state;
+	mutex_unlock(&cm_qs600_wlan_bt_mutex);
+}
+
+static int cm_qs600_wlan_power(int on)
+{
+	cm_qs600_wlan_bt_power_control(on, CM_QS600_WLAN_ON);
 	return 0;
 }
 
@@ -1328,7 +1358,7 @@ static struct wifi_platform_data ath6kl_wlan_control = {
 
 static struct platform_device msm_wlan_power_device = {
 	.name = "ath6kl_power",
-	.dev            = {
+	.dev  = {
 		.platform_data = &ath6kl_wlan_control,
 	},
 };
