@@ -25,20 +25,6 @@
 #include "devices.h"
 #include "board-cm-qs600.h"
 
-/* Chip selects for SPI clients */
-static struct gpiomux_setting gpio_spi_cs_config = {
-	.func = GPIOMUX_FUNC_GPIO,
-	.drv = GPIOMUX_DRV_12MA,
-	.pull = GPIOMUX_PULL_UP,
-};
-
-/* Chip selects for EPM SPI clients */
-static struct gpiomux_setting gpio_epm_spi_cs_config = {
-	.func = GPIOMUX_FUNC_6,
-	.drv = GPIOMUX_DRV_12MA,
-	.pull = GPIOMUX_PULL_UP,
-};
-
 static struct gpiomux_setting gpio_i2c_config = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_8MA,
@@ -70,41 +56,11 @@ static struct gpiomux_setting slimbus = {
 	.pull = GPIOMUX_PULL_KEEPER,
 };
 
-static struct gpiomux_setting gsbi1_uart_config = {
-	.func = GPIOMUX_FUNC_1,
-	.drv = GPIOMUX_DRV_16MA,
-	.pull = GPIOMUX_PULL_NONE,
-};
-
 static struct gpiomux_setting ext_regulator_config = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
 	.pull = GPIOMUX_PULL_NONE,
 	.dir = GPIOMUX_OUT_LOW,
-};
-
-static struct gpiomux_setting gsbi7_func1_cfg = {
-	.func = GPIOMUX_FUNC_1,
-	.drv = GPIOMUX_DRV_8MA,
-	.pull = GPIOMUX_PULL_NONE,
-};
-
-static struct gpiomux_setting gsbi7_func2_cfg = {
-	.func = GPIOMUX_FUNC_2,
-	.drv = GPIOMUX_DRV_8MA,
-	.pull = GPIOMUX_PULL_NONE,
-};
-
-static struct gpiomux_setting gsbi3_suspended_cfg = {
-	.func = GPIOMUX_FUNC_1,
-	.drv = GPIOMUX_DRV_2MA,
-	.pull = GPIOMUX_PULL_KEEPER,
-};
-
-static struct gpiomux_setting gsbi3_active_cfg = {
-	.func = GPIOMUX_FUNC_1,
-	.drv = GPIOMUX_DRV_8MA,
-	.pull = GPIOMUX_PULL_NONE,
 };
 
 static struct gpiomux_setting hdmi_suspend_cfg = {
@@ -123,6 +79,25 @@ static struct gpiomux_setting hdmi_active_2_cfg = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_16MA,
 	.pull = GPIOMUX_PULL_DOWN,
+};
+
+
+static struct gpiomux_setting gsbi1_uart_config = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_16MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
+static struct gpiomux_setting gsbi3_suspended_cfg = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_2MA,
+	.pull = GPIOMUX_PULL_KEEPER,
+};
+
+static struct gpiomux_setting gsbi3_active_cfg = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
 };
 
 #if !defined(CONFIG_OV5640_V4L2)
@@ -150,6 +125,19 @@ static struct gpiomux_setting gsbi5_active_cfg = {
 	.drv = GPIOMUX_DRV_12MA,
 	.pull = GPIOMUX_PULL_NONE,
 };
+
+static struct gpiomux_setting gsbi7_func1_cfg = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
+static struct gpiomux_setting gsbi7_func2_cfg = {
+	.func = GPIOMUX_FUNC_2,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
 
 static struct msm_gpiomux_config cm_qs600_hdmi_configs[] __initdata = {
 	{
@@ -183,6 +171,7 @@ static struct msm_gpiomux_config cm_qs600_hdmi_configs[] __initdata = {
 };
 
 static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
+	/* GSBI3: 9..6 */
 	{
 		.gpio      = 8,			/* GSBI3 I2C QUP SDA */
 		.settings = {
@@ -197,16 +186,18 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 			[GPIOMUX_ACTIVE] = &gsbi3_active_cfg,
 		},
 	},
+
 #if !defined(CONFIG_OV5640_V4L2)
+	/* GSBI4: 13..10 */
 	{
-		.gpio	= 10,			/* GSBI4 SPI MOSI / UART TX / GSBI4 I2C SDA */
+		.gpio	= 10,			/* GSBI4 SPI MOSI / UART TX / I2C SDA */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
 		},
 	},
 	{
-		.gpio	= 11,			/* GSBI4 SPI MISO / UART RX / GSBI4 I2C CLK */
+		.gpio	= 11,			/* GSBI4 SPI MISO / UART RX / I2C CLK */
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gsbi4_suspended_cfg,
 			[GPIOMUX_ACTIVE] = &gsbi4_active_cfg,
@@ -227,6 +218,8 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 		},
 	},
 #endif
+
+	/* GSBI1: 21..18 */
 	{
 		.gpio      = 18,		/* GSBI1 UART TX */
 		.settings = {
@@ -240,33 +233,10 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 		},
 	},
 	{
-		.gpio      = 30,		/* FP CS */
+		.gpio      = 20,		/* GSBI1 QUP I2C_DATA */
 		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_cs_config,
-		},
-	},
-	{
-		.gpio      = 32,		/* EPM CS */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_epm_spi_cs_config,
-		},
-	},
-	{
-		.gpio      = 53,		/* NOR CS */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_spi_cs_config,
-		},
-	},
-	{
-		.gpio      = 82,	/* GSBI7 UART2 TX */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gsbi7_func2_cfg,
-		},
-	},
-	{
-		.gpio      = 83,	/* GSBI7 UART2 RX */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gsbi7_func1_cfg,
+			[GPIOMUX_SUSPENDED] = &gpio_i2c_config_sus,
+			[GPIOMUX_ACTIVE] = &gpio_i2c_config,
 		},
 	},
 	{
@@ -276,11 +246,34 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 			[GPIOMUX_ACTIVE] = &gpio_i2c_config,
 		},
 	},
+
+	/* GSBI5: 54..51 */
 	{
-		.gpio      = 20,		/* GSBI1 QUP I2C_DATA */
+		.gpio      = 53,		/* GSBI5 I2C QUP SDA */
 		.settings = {
-			[GPIOMUX_SUSPENDED] = &gpio_i2c_config_sus,
-			[GPIOMUX_ACTIVE] = &gpio_i2c_config,
+			[GPIOMUX_SUSPENDED] = &gsbi5_suspended_cfg,
+			[GPIOMUX_ACTIVE] = &gsbi5_active_cfg,
+		},
+	},
+	{
+		.gpio      = 54,		/* GSBI5 I2C QUP SCL */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi5_suspended_cfg,
+			[GPIOMUX_ACTIVE] = &gsbi5_active_cfg,
+		},
+	},
+
+	/* GSBI7: 85..82 */
+	{
+		.gpio      = 82,		/* GSBI7 UART2 TX */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi7_func2_cfg,
+		},
+	},
+	{
+		.gpio      = 83,		/* GSBI7 UART2 RX */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi7_func1_cfg,
 		},
 	},
 };
@@ -321,23 +314,6 @@ static struct msm_gpiomux_config cm_qs600_ext_regulator_configs[] __initdata = {
 		.gpio = CM_QS600_EXT_3P3V_REG_EN_GPIO,
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &ext_regulator_config,
-		},
-	},
-};
-
-static struct msm_gpiomux_config mpq8064_gsbi5_i2c_configs[] __initdata = {
-	{
-		.gpio      = 53,			/* GSBI5 I2C QUP SDA */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gsbi5_suspended_cfg,
-			[GPIOMUX_ACTIVE] = &gsbi5_active_cfg,
-		},
-	},
-	{
-		.gpio      = 54,			/* GSBI5 I2C QUP SCL */
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &gsbi5_suspended_cfg,
-			[GPIOMUX_ACTIVE] = &gsbi5_active_cfg,
 		},
 	},
 };
@@ -515,8 +491,6 @@ void __init cm_qs600_init_gpiomux(void)
 
 	msm_gpiomux_install(cm_qs600_gsbi_configs,
 			    ARRAY_SIZE(cm_qs600_gsbi_configs));
-	msm_gpiomux_install(mpq8064_gsbi5_i2c_configs,
-			    ARRAY_SIZE(mpq8064_gsbi5_i2c_configs));
 
 	msm_gpiomux_install(cm_qs600_slimbus_config,
 			    ARRAY_SIZE(cm_qs600_slimbus_config));
