@@ -1287,12 +1287,10 @@ static DEFINE_MUTEX(cm_qs600_wlan_bt_mutex);
 
 static struct gpio wlan_bt_gpios[] __initdata = {
 	{ CM_QS600_WAKE_ON_WLAN,	GPIOF_IN,		"wake on wlan" },
-	{ CM_QS600_BT_WKUP_HOST,	GPIOF_IN,		"wake on bt" },
 
 	{ CM_QS600_WLAN_PWD_L,		GPIOF_OUT_INIT_LOW,	"wlan pwd_l" },
 	{ CM_QS600_BT_PWD_L,		GPIOF_OUT_INIT_LOW,	"bt pwd_l" },
 	{ CM_QS600_WLAN_BT_GPIO10,	GPIOF_OUT_INIT_LOW,	"wlan_bt gpio10" },
-	{ CM_QS600_HOST_WKUP_BT,	GPIOF_OUT_INIT_HIGH,	"wake up bt" },
 };
 
 static int __init cm_qs600_wlan_bt_init(void)
@@ -1352,6 +1350,13 @@ static int cm_qs600_wlan_power(int on)
 	return 0;
 }
 
+static int cm_qs600_bt_power(int on)
+{
+	cm_qs600_wlan_bt_power_control(on, CM_QS600_BT_ON);
+	return 0;
+}
+
+/* Wlan */
 static struct wifi_platform_data ath6kl_wlan_control = {
 	.set_power = cm_qs600_wlan_power,
 };
@@ -1360,6 +1365,43 @@ static struct platform_device msm_wlan_power_device = {
 	.name = "ath6kl_power",
 	.dev  = {
 		.platform_data = &ath6kl_wlan_control,
+	},
+};
+
+/* Bluetooth */
+static struct resource bluesleep_resources[] = {
+	{
+		.name   = "gpio_host_wake",
+		.start  = CM_QS600_BT_WKUP_HOST,
+		.end    = CM_QS600_BT_WKUP_HOST,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "gpio_ext_wake",
+		.start  = CM_QS600_HOST_WKUP_BT,
+		.end    = CM_QS600_HOST_WKUP_BT,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "host_wake",
+		.start  = MSM_GPIO_TO_INT(CM_QS600_BT_WKUP_HOST),
+		.end    = MSM_GPIO_TO_INT(CM_QS600_BT_WKUP_HOST),
+		.flags  = IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device msm_bluesleep_device = {
+	.name		= "bluesleep",
+	.id		= -1,
+	.num_resources	= ARRAY_SIZE(bluesleep_resources),
+	.resource	= bluesleep_resources,
+};
+
+static struct platform_device msm_bt_power_device = {
+	.name = "bt_power",
+	.id = -1,
+	.dev  = {
+		.platform_data = &cm_qs600_bt_power,
 	},
 };
 
@@ -1900,6 +1942,8 @@ static struct platform_device *common_devices[] __initdata = {
 	&apq8064_device_hsusb_host,
 	&android_usb_device,
 	&msm_wlan_power_device,
+	&msm_bluesleep_device,
+	&msm_bt_power_device,
 	&msm_device_iris_fm,
 	&cm_qs600_fmem_device,
 #if (defined CONFIG_ANDROID_PMEM) && !(defined CONFIG_MSM_MULTIMEDIA_USE_ION)
