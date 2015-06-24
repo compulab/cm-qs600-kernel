@@ -1919,6 +1919,7 @@ static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 #elif defined (CM_QS600_GSBI4_AS_UART)
 	&apq8064_device_uart_gsbi4,	/* ttyHSL1 */
 #endif
+	&mpq8064_device_uartdm_gsbi6,	/* ttyHS0 */
 	&apq8064_device_uart_gsbi7,	/* ttyHSL0 */
 };
 
@@ -2182,6 +2183,26 @@ static void __init cm_qs600_spi_init(void)
 		&cm_qs600_spi_qup_gsbi4_pdata;
 }
 
+
+static struct msm_serial_hs_platform_data cm_qs600_uartdm_gsbi6_pdata = {
+	.config_gpio		= 4,	/* num. of UART wires */
+	.uart_tx_gpio		= 14,
+	.uart_rx_gpio		= 15,
+	.uart_cts_gpio		= 16,
+	.uart_rfr_gpio		= 17,
+	.inject_rx_on_wakeup	= 1,
+	.rx_to_inject		= 0xfd,
+};
+
+static void __init cm_qs600_uart_init(void)
+{
+	/* GSBI-6 */
+	cm_qs600_uartdm_gsbi6_pdata.wakeup_irq =
+		gpio_to_irq(cm_qs600_uartdm_gsbi6_pdata.uart_rx_gpio);
+	mpq8064_device_uartdm_gsbi6.dev.platform_data =
+		&cm_qs600_uartdm_gsbi6_pdata;
+}
+
 static int cm_qs600_ethernet_init(void)
 {
 	return 0;
@@ -2342,6 +2363,7 @@ static void __init cm_qs600_init(void)
 
 	cm_qs600_i2c_init();
 	cm_qs600_spi_init();
+	cm_qs600_uart_init();
 
 	cm_qs600_init_pmic();
 

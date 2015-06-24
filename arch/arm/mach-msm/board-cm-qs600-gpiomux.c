@@ -126,6 +126,18 @@ static struct gpiomux_setting gsbi5_active_cfg = {
 	.pull = GPIOMUX_PULL_NONE,
 };
 
+static struct gpiomux_setting gsbi6_uartdm_suspended = {
+	.func = GPIOMUX_FUNC_GPIO,
+	.drv = GPIOMUX_DRV_2MA,
+	.pull = GPIOMUX_PULL_DOWN,
+};
+
+static struct gpiomux_setting gsbi6_uartdm_active = {
+	.func = GPIOMUX_FUNC_2,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
 static struct gpiomux_setting gsbi7_func1_cfg = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_8MA,
@@ -218,6 +230,36 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 		},
 	},
 #endif
+
+	/* GSBI6: 17..14 */
+	{
+		.gpio	= 14,			/* UART_BT_TX */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi6_uartdm_suspended,
+			[GPIOMUX_ACTIVE] = &gsbi6_uartdm_active,
+		},
+	},
+	{
+		.gpio	= 15,			/* UART_BT_RX */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi6_uartdm_suspended,
+			[GPIOMUX_ACTIVE] = &gsbi6_uartdm_active,
+		},
+	},
+	{
+		.gpio	= 16,			/* UART_BT_CTS */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi6_uartdm_suspended,
+			[GPIOMUX_ACTIVE] = &gsbi6_uartdm_active,
+		},
+	},
+	{
+		.gpio	= 17,			/* UART_BT_RFR */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi6_uartdm_suspended,
+			[GPIOMUX_ACTIVE] = &gsbi6_uartdm_active,
+		},
+	},
 
 	/* GSBI1: 21..18 */
 	{
