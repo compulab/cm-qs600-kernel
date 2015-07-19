@@ -1319,9 +1319,10 @@ static void cm_qs600_wlan_bt_power_sequence(int on)
 	gpio_set_value(CM_QS600_BT_PWD_L, 0);
 
 	if (on) {
-		mdelay(5);
+		mdelay(10);
 		gpio_set_value(CM_QS600_WLAN_PWD_L, 1);
 		gpio_set_value(CM_QS600_BT_PWD_L, 1);
+		mdelay(100);
 	}
 }
 
