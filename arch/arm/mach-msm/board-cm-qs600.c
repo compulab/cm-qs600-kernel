@@ -135,6 +135,9 @@
 #define MSM_PCIE_WAKE_N_IRQ		PM8921_GPIO_IRQ(PM8921_IRQ_BASE, \
 							PMIC_PCIE_WAKE_N)
 
+/* Heartbeat LED GPIO */
+#define CM_QS600_GREEN_LED		87
+
 #ifdef CONFIG_KERNEL_MSM_CONTIG_MEM_REGION
 static unsigned msm_contig_mem_size = MSM_CONTIG_MEM_SIZE;
 static int __init msm_contig_mem_size_setup(char *p)
@@ -2209,6 +2212,43 @@ static int cm_qs600_ethernet_init(void)
 	return 0;
 }
 
+
+#ifdef CONFIG_LEDS_GPIO
+static struct gpio_led cm_qs600_leds[] = {
+#ifdef CONFIG_LEDS_TRIGGER_HEARTBEAT
+	{
+		.gpio			= CM_QS600_GREEN_LED,
+		.name			= "cm_qs600:load",
+		.default_trigger	= "heartbeat",
+		.active_low		= 0,
+	},
+#endif
+};
+
+static struct gpio_led_platform_data cm_qs600_led_pdata = {
+	.num_leds	= ARRAY_SIZE(cm_qs600_leds),
+	.leds		= cm_qs600_leds,
+};
+
+static struct platform_device cm_qs600_led_device = {
+	.name		= "leds-gpio",
+	.id		= -1,
+	.dev		= {
+		.platform_data = &cm_qs600_led_pdata,
+	},
+};
+
+static void __init cm_qs600_init_led(void)
+{
+	platform_device_register(&cm_qs600_led_device);
+}
+
+#else
+
+static inline void cm_qs600_init_led(void) {}
+#endif
+
+
 /* Sensors DSPS platform data */
 #define DSPS_PIL_GENERIC_NAME		"dsps"
 static void __init cm_qs600_init_dsps(void)
@@ -2397,6 +2437,8 @@ static void __init cm_qs600_init(void)
 	cm_qs600_pcie_init();
 
 	cm_qs600_ethernet_init();
+	cm_qs600_init_led();
+
 	msm_rotator_set_split_iommu_domain();
 	platform_add_devices(cdp_devices, ARRAY_SIZE(cdp_devices));
 
