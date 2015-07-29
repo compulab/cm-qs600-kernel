@@ -135,6 +135,7 @@
 #define MSM_PCIE_WAKE_N_IRQ		PM8921_GPIO_IRQ(PM8921_IRQ_BASE, \
 							PMIC_PCIE_WAKE_N)
 
+#define SB_QS600_POWER_LED		28
 /* Heartbeat LED GPIO */
 #define CM_QS600_GREEN_LED		87
 
@@ -2221,6 +2222,15 @@ static struct gpio_led cm_qs600_leds[] = {
 		.name			= "cm_qs600:load",
 		.default_trigger	= "heartbeat",
 		.active_low		= 0,
+	},
+#endif
+#ifdef CONFIG_LEDS_TRIGGER_SLEEP
+	{
+		.gpio			= SB_QS600_POWER_LED,
+		.name			= "cm_qs600:power",
+		.default_trigger	= "sleep",
+		.active_low		= 0,
+		.default_state		= LEDS_GPIO_DEFSTATE_OFF,
 	},
 #endif
 };
