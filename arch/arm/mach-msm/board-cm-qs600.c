@@ -2449,7 +2449,9 @@ static void __init cm_qs600_init(void)
 	cm_qs600_ethernet_init();
 	cm_qs600_init_led();
 
+#ifdef CONFIG_MSM_ROTATOR
 	msm_rotator_set_split_iommu_domain();
+#endif
 	platform_add_devices(cdp_devices, ARRAY_SIZE(cdp_devices));
 
 	cm_qs600_register_i2c_devices();
@@ -2459,7 +2461,7 @@ static void __init cm_qs600_init(void)
 	apq8064_init_gpu();
 	platform_add_devices(apq8064_footswitch, apq8064_num_footswitch);
 
-#ifdef CONFIG_MSM_CAMERA_V4L2
+#if (defined CONFIG_MSM_CAMERA) && (defined CONFIG_MSM_CAMERA_V4L2)
 	cm_qs600_init_camera();
 #endif
 #ifdef CONFIG_SATA_AHCI_MSM
