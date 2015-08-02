@@ -363,8 +363,8 @@ static int msm_gesture_init_ctrl(struct v4l2_subdev *sd,
 	v4l2_ctrl_new_custom(&p_gesture_ctrl->ctrl_handler,
 		&msm_gesture_ctrl_filter, p_gesture_ctrl);
 	if (p_gesture_ctrl->ctrl_handler.error) {
-		int err = p_gesture_ctrl->ctrl_handler.error;
-		D("%s: error adding control %d", __func__, err);
+		D("%s: error adding control %d",
+		  __func__, p_gesture_ctrl->ctrl_handler.error);
 		p_gesture_ctrl->ctrl_handler.error = 0;
 	}
 	sd->ctrl_handler = &p_gesture_ctrl->ctrl_handler;
