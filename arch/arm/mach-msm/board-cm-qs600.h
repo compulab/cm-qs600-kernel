@@ -79,6 +79,7 @@ void cm_qs600_init_pmic(void);
 
 
 #define APQ_8064_GSBI1_QUP_I2C_BUS_ID	0
+#define APQ_8064_GSBI2_QUP_I2C_BUS_ID	2
 #define APQ_8064_GSBI3_QUP_I2C_BUS_ID	3
 #define APQ_8064_GSBI4_QUP_I2C_BUS_ID	4
 #define APQ_8064_GSBI5_QUP_I2C_BUS_ID	5

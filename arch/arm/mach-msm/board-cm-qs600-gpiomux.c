@@ -88,6 +88,18 @@ static struct gpiomux_setting gsbi1_uart_config = {
 	.pull = GPIOMUX_PULL_NONE,
 };
 
+static struct gpiomux_setting gsbi2_suspended_cfg = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_2MA,
+	.pull = GPIOMUX_PULL_KEEPER,
+};
+
+static struct gpiomux_setting gsbi2_active_cfg = {
+	.func = GPIOMUX_FUNC_1,
+	.drv = GPIOMUX_DRV_8MA,
+	.pull = GPIOMUX_PULL_NONE,
+};
+
 static struct gpiomux_setting gsbi3_suspended_cfg = {
 	.func = GPIOMUX_FUNC_1,
 	.drv = GPIOMUX_DRV_2MA,
@@ -286,6 +298,22 @@ static struct msm_gpiomux_config cm_qs600_gsbi_configs[] __initdata = {
 		.settings = {
 			[GPIOMUX_SUSPENDED] = &gpio_i2c_config_sus,
 			[GPIOMUX_ACTIVE] = &gpio_i2c_config,
+		},
+	},
+
+	/* GSBI2: 25..22 */
+	{
+		.gpio	= 24,			/* GSBI2 I2C QUP SDA */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi2_suspended_cfg,
+			[GPIOMUX_ACTIVE] = &gsbi2_active_cfg,
+		},
+	},
+	{
+		.gpio	= 25,			/* GSBI2 I2C QUP CLK */
+		.settings = {
+			[GPIOMUX_SUSPENDED] = &gsbi2_suspended_cfg,
+			[GPIOMUX_ACTIVE] = &gsbi2_active_cfg,
 		},
 	},
 

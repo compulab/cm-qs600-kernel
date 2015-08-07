@@ -1915,6 +1915,7 @@ cm_qs600_pm8921_device_rpm_regulator __devinitdata = {
 
 static struct platform_device *cm_qs600_gsbi_devices[] __initdata = {
 	&apq8064_device_qup_i2c_gsbi1,
+	&apq8064_device_qup_i2c_gsbi2,
 	&apq8064_device_qup_i2c_gsbi3,
 	&mpq8064_device_qup_i2c_gsbi5,
 #if defined (CM_QS600_GSBI4_AS_I2C)
@@ -2134,6 +2135,11 @@ static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi1_pdata = {
 	.src_clk_rate = 24000000,
 };
 
+static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi2_pdata = {
+	.clk_freq = 384000,
+	.src_clk_rate = 24000000,
+};
+
 static struct msm_i2c_platform_data cm_qs600_i2c_qup_gsbi3_pdata = {
 	.clk_freq = 384000,
 	.src_clk_rate = 24000000,
@@ -2167,6 +2173,10 @@ static void __init cm_qs600_i2c_init(void)
 	/* Ensure protocol code is written before proceeding */
 	wmb();
 	iounmap(gsbi_mem);
+
+	/* I2C-2 */
+	apq8064_device_qup_i2c_gsbi2.dev.platform_data =
+		&cm_qs600_i2c_qup_gsbi2_pdata;
 
 	/* I2C-3 */
 	apq8064_device_qup_i2c_gsbi3.dev.platform_data =
