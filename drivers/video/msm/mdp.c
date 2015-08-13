@@ -1097,7 +1097,7 @@ int mdp_histogram_start(struct mdp_histogram_start_req *req)
 	mutex_lock(&mgmt->mdp_hist_mutex);
 	if (mgmt->mdp_is_hist_start == TRUE) {
 		pr_err("%s histogram already started\n", __func__);
-		ret = -EPERM;
+		ret = 0;
 		goto error_lock;
 	}
 
