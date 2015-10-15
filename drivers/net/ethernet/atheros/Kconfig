@@ -67,4 +67,10 @@ config ATL1C
 	  To compile this driver as a module, choose M here.  The module
 	  will be called atl1c.
 
+config ATL1C_PLATFORM_DATA
+	bool "Atheros L1C platform data"
+	depends on ATL1C
+	---help---
+	  Enables Atheros L1C platform data support
+
 endif # NET_VENDOR_ATHEROS

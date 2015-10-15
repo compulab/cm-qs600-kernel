@@ -10,6 +10,7 @@ obj-$(CONFIG_NET_VENDOR_ALTEON) += alteon/
 obj-$(CONFIG_NET_VENDOR_AMD) += amd/
 obj-$(CONFIG_NET_VENDOR_APPLE) += apple/
 obj-$(CONFIG_NET_VENDOR_ATHEROS) += atheros/
+obj-$(CONFIG_ATL1C_PLATFORM_DATA) += atheros/
 obj-$(CONFIG_NET_CADENCE) += cadence/
 obj-$(CONFIG_NET_BFIN) += adi/
 obj-$(CONFIG_NET_VENDOR_BROADCOM) += broadcom/
