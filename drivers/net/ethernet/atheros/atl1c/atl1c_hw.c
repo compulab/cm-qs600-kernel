@@ -22,6 +22,7 @@
 #include <linux/delay.h>
 #include <linux/mii.h>
 #include <linux/crc32.h>
+#include <linux/atl1c_platform.h>
 
 #include "atl1c.h"
 
@@ -77,6 +78,16 @@ static int atl1c_get_permanent_address(struct atl1c_hw *hw)
 	u8  eth_addr[ETH_ALEN];
 	u16 phy_data;
 	bool raise_vol = false;
+	struct atl1c_platform_data *platform_data;
+
+	/* Try to get mac from platform data */
+	platform_data = atl1c_get_platform_data();
+	if (!IS_ERR(platform_data))
+		if (is_valid_ether_addr(platform_data->mac_addr)) {
+			memcpy(hw->perm_mac_addr, platform_data->mac_addr,
+			       ETH_ALEN);
+			return 0;
+		}
 
 	/* init */
 	addr[0] = addr[1] = 0;
