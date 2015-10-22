@@ -2283,7 +2283,15 @@ static void __init cm_qs600_init_dsps(void)
 }
 
 #ifdef CONFIG_EEPROM_AT24
-static struct at24_platform_data eeprom_24c02 = {
+static struct at24_platform_data cm_qs600_eeprom_24c02 = {
+	.byte_len	= 256,
+	.page_size	= 16,
+	.flags		= AT24_FLAG_IRUGO,
+	.setup		= NULL,
+	.context	= NULL,
+};
+
+static struct at24_platform_data sb_qs600_eeprom_24c02 = {
 	.byte_len	= 256,
 	.page_size	= 16,
 	.flags		= AT24_FLAG_IRUGO,
@@ -2293,13 +2301,6 @@ static struct at24_platform_data eeprom_24c02 = {
 #endif
 
 static struct i2c_board_info cm_qs600_i2c1_board_info[] __initdata = {
-#ifdef CONFIG_EEPROM_AT24
-	{
-		/* 24c02 EEPROM on the module board */
-		I2C_BOARD_INFO("24c02", 0x50),
-		.platform_data = &eeprom_24c02,
-	},
-#endif
 };
 
 static struct i2c_board_info cm_qs600_i2c2_board_info[] __initdata = {
@@ -2307,7 +2308,7 @@ static struct i2c_board_info cm_qs600_i2c2_board_info[] __initdata = {
 	{
 		/* 24c02 EEPROM on the module board */
 		I2C_BOARD_INFO("24c02", 0x50),
-		.platform_data = &eeprom_24c02,
+		.platform_data = &cm_qs600_eeprom_24c02,
 	},
 #endif
 };
@@ -2317,19 +2318,12 @@ static struct i2c_board_info cm_qs600_i2c3_board_info[] __initdata = {
 	{
 		/* 24c02 EEPROM on the module board */
 		I2C_BOARD_INFO("24c02", 0x50),
-		.platform_data = &eeprom_24c02,
+		.platform_data = &sb_qs600_eeprom_24c02,
 	},
 #endif
 };
 
 static struct i2c_board_info cm_qs600_i2c5_board_info[] __initdata = {
-#ifdef CONFIG_EEPROM_AT24
-	{
-		/* 24c02 EEPROM on the base board */
-		I2C_BOARD_INFO("24c02", 0x50),
-		.platform_data = &eeprom_24c02,
-	},
-#endif
 };
 
 static struct i2c_registry cm_qs600_i2c_devices[] __initdata = {
