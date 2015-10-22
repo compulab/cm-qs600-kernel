@@ -28,6 +28,9 @@
 #ifdef CONFIG_ANDROID_PMEM
 #include <linux/android_pmem.h>
 #endif
+#include <linux/fs.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
 #include <linux/i2c.h>
 #include <linux/i2c/at24.h>
 #include <linux/spi/spi.h>
@@ -2285,6 +2288,79 @@ static void __init cm_qs600_init_dsps(void)
 static struct cm_qs600_eeprom_config cm_qs600_eeprom;
 
 #ifdef CONFIG_EEPROM_AT24
+enum {
+	CM_QS600_PROC_MACADDR_ETH,
+	CM_QS600_PROC_MACADDR_WLAN,
+	CM_QS600_PROC_MACADDR_BT,
+};
+
+static int cm_qs600_macaddr_show(struct seq_file *m, void *v)
+{
+	char *ptr = NULL;
+
+	switch ((unsigned)m->private) {
+	case CM_QS600_PROC_MACADDR_ETH:
+		ptr = &cm_qs600_eeprom.mac_addr[0][0];
+		break;
+	case CM_QS600_PROC_MACADDR_WLAN:
+		ptr = &cm_qs600_eeprom.wifi_mac_addr[0];
+		seq_write(m, ptr, EEPROM_MAC_ADDR_LEN);
+		seq_printf(m, "\n");
+		break;
+	case CM_QS600_PROC_MACADDR_BT:
+		ptr = &cm_qs600_eeprom.bt_mac_addr[0];
+		break;
+	}
+
+	if (ptr != NULL)
+		seq_printf(m, "%02x:%02x:%02x:%02x:%02x:%02x\n",
+			   ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
+
+	return 0;
+}
+
+static int cm_qs600_macaddr_open(struct inode *inode, struct file *file)
+{
+	const char *filename = file->f_path.dentry->d_name.name;
+	int func = -1;
+
+	/* map proc file name to functionality */
+	if (!strcmp("eth", filename))
+		func = CM_QS600_PROC_MACADDR_ETH;
+	else if (!strcmp("wlan", filename))
+		func = CM_QS600_PROC_MACADDR_WLAN;
+	else if (!strcmp("bt", filename))
+		func = CM_QS600_PROC_MACADDR_BT;
+
+	return single_open(file, cm_qs600_macaddr_show, (void *)func);
+}
+
+static const struct file_operations cm_qs600_macaddr_fops = {
+	.owner		= THIS_MODULE,
+	.open		= cm_qs600_macaddr_open,
+	.read		= seq_read,
+	.llseek		= seq_lseek,
+	.release	= single_release,
+};
+
+static int cm_qs600_setup_procfs(void)
+{
+	struct proc_dir_entry *dir;
+	struct proc_dir_entry *file;
+
+	dir = proc_mkdir("macaddr", NULL);
+	if (!dir) {
+		pr_err("%s: could not create procfs directory \n", __func__);
+		return PTR_ERR(dir);
+	}
+	proc_create("eth", (S_IFREG | S_IRUGO), dir, &cm_qs600_macaddr_fops);
+	file = proc_create("wlan", (S_IFREG | S_IRUGO), dir, &cm_qs600_macaddr_fops);
+	file->size = EEPROM_MAC_ADDR_LEN;	/* enforce non-zero file size */
+	proc_create("bt", (S_IFREG | S_IRUGO), dir, &cm_qs600_macaddr_fops);
+
+	return 0;
+}
+
 static void cm_qs600_eeprom_setup(struct memory_accessor *ma, void *context)
 {
 	int ret;
@@ -2296,6 +2372,8 @@ static void cm_qs600_eeprom_setup(struct memory_accessor *ma, void *context)
 			__func__, ret);
 		return;
 	}
+
+	cm_qs600_setup_procfs();
 }
 
 static struct at24_platform_data cm_qs600_eeprom_24c02 = {
