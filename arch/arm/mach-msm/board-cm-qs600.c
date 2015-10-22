@@ -2282,12 +2282,27 @@ static void __init cm_qs600_init_dsps(void)
 	platform_device_register(&msm_dsps_device_8064);
 }
 
+static struct cm_qs600_eeprom_config cm_qs600_eeprom;
+
 #ifdef CONFIG_EEPROM_AT24
+static void cm_qs600_eeprom_setup(struct memory_accessor *ma, void *context)
+{
+	int ret;
+	int len = sizeof(cm_qs600_eeprom);
+
+	ret = ma->read(ma, (char *)&cm_qs600_eeprom, 0, len);
+	if (ret < len) {
+		pr_warn("%s: could not read on-board EEPROM: %d \n",
+			__func__, ret);
+		return;
+	}
+}
+
 static struct at24_platform_data cm_qs600_eeprom_24c02 = {
 	.byte_len	= 256,
 	.page_size	= 16,
 	.flags		= AT24_FLAG_IRUGO,
-	.setup		= NULL,
+	.setup		= cm_qs600_eeprom_setup,
 	.context	= NULL,
 };
 

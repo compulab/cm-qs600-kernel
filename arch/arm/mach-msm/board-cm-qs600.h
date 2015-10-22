@@ -14,6 +14,7 @@
 #ifndef __ARCH_ARM_MACH_MSM_BOARD_APQ8064_H
 #define __ARCH_ARM_MACH_MSM_BOARD_APQ8064_H
 
+#include <linux/if_ether.h>
 #include <linux/regulator/msm-gpio-regulator.h>
 #include <linux/mfd/pm8xxx/pm8921.h>
 #include <linux/mfd/pm8xxx/pm8821.h>
@@ -115,5 +116,30 @@ void cm_qs600_pm8xxx_gpio_mpp_init(void);
 
 extern struct msm_rtb_platform_data apq8064_rtb_pdata;
 extern struct msm_cache_dump_platform_data apq8064_cache_dump_pdata;
+
+/* CM-QS600 on-board EEPROM layout */
+#define EEPROM_MAJ_REV_LEN		2
+#define EEPROM_MIN_REV_LEN		2
+#define EEPROM_MAC_ADDR_NUM		2
+#define EEPROM_MAC_ADDR_LEN		ETH_ALEN
+#define EEPROM_DATE_LEN			4
+#define EEPROM_SERIAL_LEN		12
+#define EEPROM_NAME_LEN			16
+#define EEPROM_PROD_OPT_NUM		3
+#define EEPROM_PROD_OPT_LEN		16
+
+struct cm_qs600_eeprom_config {
+	char maj_rev[EEPROM_MAJ_REV_LEN];
+	char min_rev[EEPROM_MIN_REV_LEN];
+	char mac_addr[EEPROM_MAC_ADDR_NUM][EEPROM_MAC_ADDR_LEN];
+	char prod_date[EEPROM_DATE_LEN];
+	char serial_num[EEPROM_SERIAL_LEN];
+	char wifi_mac_addr[EEPROM_MAC_ADDR_LEN];
+	char bt_mac_addr[EEPROM_MAC_ADDR_LEN];
+	char layout_ver;
+	char res[83];
+	char name[EEPROM_NAME_LEN];
+	char prod_options[EEPROM_PROD_OPT_NUM][EEPROM_PROD_OPT_LEN];
+};
 
 #endif	/* __ARCH_ARM_MACH_MSM_BOARD_APQ8064_H */
