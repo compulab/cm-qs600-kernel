@@ -41,6 +41,7 @@
 #include <linux/mfd/wcd9xxx/core.h>
 #include <linux/mfd/wcd9xxx/pdata.h>
 #include <linux/platform_data/qcom_crypto_device.h>
+#include <linux/atl1c_platform.h>
 #include <linux/wlan_plat.h>
 #include <linux/mtd/partitions.h>
 #include <asm/mach-types.h>
@@ -2221,11 +2222,6 @@ static void __init cm_qs600_uart_init(void)
 		&cm_qs600_uartdm_gsbi6_pdata;
 }
 
-static int cm_qs600_ethernet_init(void)
-{
-	return 0;
-}
-
 
 #ifdef CONFIG_LEDS_GPIO
 static struct gpio_led cm_qs600_leds[] = {
@@ -2286,6 +2282,22 @@ static void __init cm_qs600_init_dsps(void)
 }
 
 static struct cm_qs600_eeprom_config cm_qs600_eeprom;
+
+static int cm_qs600_ethernet_init(void)
+{
+	int ret;
+	struct atl1c_platform_data atl1c_pdata;
+
+	/* propagate MAC addr to the Ethernet controller */
+	memcpy(atl1c_pdata.mac_addr, cm_qs600_eeprom.mac_addr,
+	       EEPROM_MAC_ADDR_LEN);
+	ret = atl1c_set_platform_data(&atl1c_pdata);
+	if (ret)
+		pr_warn("%s: could not set atl1c platform data: %d \n",
+			__func__, ret);
+
+	return ret;
+}
 
 #ifdef CONFIG_EEPROM_AT24
 enum {
@@ -2374,6 +2386,7 @@ static void cm_qs600_eeprom_setup(struct memory_accessor *ma, void *context)
 	}
 
 	cm_qs600_setup_procfs();
+	cm_qs600_ethernet_init();
 }
 
 static struct at24_platform_data cm_qs600_eeprom_24c02 = {
@@ -2558,8 +2571,6 @@ static void __init cm_qs600_init(void)
 	cm_qs600_init_dsps();
 	BUG_ON(msm_pm_boot_init(&msm_pm_boot_pdata));
 	cm_qs600_pcie_init();
-
-	cm_qs600_ethernet_init();
 	cm_qs600_init_led();
 
 #ifdef CONFIG_MSM_ROTATOR
