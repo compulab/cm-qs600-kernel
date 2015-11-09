@@ -2239,6 +2239,7 @@ static struct gpio_led cm_qs600_leds[] = {
 		.name			= "cm_qs600:power",
 		.default_trigger	= "sleep",
 		.active_low		= 0,
+		.retain_state_suspended	= true,
 		.default_state		= LEDS_GPIO_DEFSTATE_OFF,
 	},
 #endif
