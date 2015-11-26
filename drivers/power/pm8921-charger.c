@@ -3671,8 +3671,8 @@ static void eoc_worker(struct work_struct *work)
 				struct pm8921_chg_chip, eoc_work);
 	static int count;
 	int end;
-	int vbat_meas_uv, vbat_meas_mv;
-	int ichg_meas_ua, ichg_meas_ma;
+	int vbat_meas_uv = 0, vbat_meas_mv;
+	int ichg_meas_ua = 0, ichg_meas_ma;
 	int vbat_batt_terminal_uv;
 
 	pm8921_bms_get_simultaneous_battery_voltage_and_current(
