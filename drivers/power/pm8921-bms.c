@@ -1592,7 +1592,11 @@ int pm8921_bms_get_simultaneous_battery_voltage_and_current(int *ibat_ua,
 		return -EINVAL;
 	}
 
-	if (pm8921_is_batfet_closed()) {
+	rc = pm8921_is_batfet_closed();
+	if (rc < 0)
+		return rc;
+
+	if (rc) {
 		return override_mode_simultaneous_battery_voltage_and_current(
 								ibat_ua,
 								vbat_uv);
