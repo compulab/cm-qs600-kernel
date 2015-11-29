@@ -1819,6 +1819,14 @@ static void very_low_voltage_check(struct pm8921_bms_chip *chip,
 					int ibat_ua, int vbat_uv)
 {
 	int rc;
+
+	/*
+	 * Workaround vbat_uv value being of hardly understandable nature.
+	 * On CM-QS600 we don't normally use battery, so it is safe to assume
+	 * the battery voltage is Ok under any conditions.
+	 */
+	return;
+
 	/*
 	 * if battery is very low (v_cutoff voltage + 20mv) hold
 	 * a wakelock untill soc = 0%
